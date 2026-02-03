@@ -1,17 +1,17 @@
 # roomie
 ## Plataforma de Gerenciamento de Moradias Estudantis
 
-## :page_with_curl: Sobre o Projeto
+## Sobre o Projeto
 A **Plataforma de Gerenciamento de Moradias Estudantis (roomie)** é um sistema desenvolvido para facilitar a busca, oferta e organização de espaços de moradia entre estudantes.
 
-A plataforma centraliza informações e conecta estudantes que procuram moradia com proprietários ou outros estudantes interessados em dividir um imóvel. O sistema permite que estudantes criem perfis detalhados, informando preferências como localização, tipo de imóvel, faixa de preço, número de quartos e aceitação de animais de estimação.
+A plataforma centraliza informações e conecta estudantes que procuram moradia com proprietários ou outros estudantes interessados em dividir um imóvel. O sistema permite que estudantes criem perfis detalhados, informando seus gostos, hobbies e etc.
 
-Proprietários podem cadastrar imóveis com descrições, fotos e informações de contato.  
+Proprietários podem cadastrar imóveis com descrições e fotos.  
 Como diferencial, o sistema prevê um mecanismo de correspondência inteligente para sugerir colegas de moradia compatíveis com base em hábitos, estilo de vida e interesses em comum.
 
 O objetivo principal é simplificar o processo de encontrar e organizar moradias estudantis, promovendo a formação de comunidades e garantindo melhores condições de moradia durante a vida acadêmica.
 
-## :octocat: Integrantes
+## Integrantes
 - [João Francisco Araújo de Mello](https://github.com/joaofamello)
 - [José Gustavo Andrade da Silva](https://github.com/Gustavo7a)
 - [Jurandir Tenório Vaz Neto](https://github.com/Jurandirtvaz)
@@ -20,14 +20,14 @@ O objetivo principal é simplificar o processo de encontrar e organizar moradias
 - [Luigi Mateo e Silva](https://github.com/memelon220)
 - [Pablo Roldão Pereira Santos](https://github.com/pablo-roldao)
 
-## :round_pushpin: Objetivos
+## Objetivos
 - Facilitar a busca por moradias estudantis
 - Permitir o cadastro e gerenciamento de imóveis
 - Conectar estudantes com interesses e perfis compatíveis
 - Oferecer filtros avançados por localização, tipo de imóvel e preferências
 - Promover melhor organização e planejamento da moradia durante a vida acadêmica
 
-## :hammer_and_wrench: Tecnologias Utilizadas
+## Tecnologias Utilizadas
 ### Frontend
 - Angular
 - TypeScript
@@ -38,7 +38,7 @@ O objetivo principal é simplificar o processo de encontrar e organizar moradias
 - Java
 - Spring Boot
 
-## :construction: Status do Projeto
+## Status do Projeto
 Em desenvolvimento.  
 
 
