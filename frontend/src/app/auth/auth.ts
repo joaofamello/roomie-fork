@@ -45,7 +45,23 @@ export class Auth {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      
+      if (decoded.exp && decoded.exp < currentTime) {
+        this.logout();
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      this.logout();
+      return false;
+    }
   }
 
   hasRole(requiredRole: UserRole): boolean {

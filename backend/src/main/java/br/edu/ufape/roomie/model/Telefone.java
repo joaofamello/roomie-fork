@@ -15,14 +15,15 @@ public class Telefone{
     @Column(name = "id_telefone")
     private String idTelefone;
 
-    @Column(name = numero)
+    @Column(name = "numero")
     private String numero;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private User usuario;
 
-    public Telefone(String numero, User usuario)
+    public Telefone(String numero, User usuario) {
         this.numero = numero;
         this.usuario = usuario;
+    }
 }
