@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.stream.Collectors;
@@ -19,10 +19,18 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder; 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username);
+        User user = userRepository.findByEmail(username); 
+        if(user == null){
+            throw new UsernameNotFoundException("Usuário não encontrado"); 
+        }
+
+        return user; 
     }
 
     public UserResponseDTO register(UserDTO userDTO) {
@@ -30,7 +38,7 @@ public class AuthService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email já cadastrado!");
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.getPassword());
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
         User newUser = new User(userDTO.getName(), userDTO.getEmail(), encryptedPassword, userDTO.getGender(), userDTO.getRole());
         if (userDTO.getPhones() != null){
             for(String numero : userDTO.getPhones()){
