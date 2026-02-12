@@ -16,5 +16,8 @@ export interface LoginResponse {
 export interface RegisterData {
   name: string;
   email: string;
+  cpf: string;
   password: string;
+  gender: string;
+  phones: [string]
 }
