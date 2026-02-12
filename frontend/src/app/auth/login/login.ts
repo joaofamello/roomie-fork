@@ -91,7 +91,7 @@ export class Login {
           cpf: formValue.cpf.replace(/\D/g, ''),
           password: formValue.password,
           gender: formValue.gender,
-          phones: [formValue.phone]
+          phones: [formValue.phone.replace(/\D/g, '')]
         };
 
         await firstValueFrom(this.auth.register(payload));
