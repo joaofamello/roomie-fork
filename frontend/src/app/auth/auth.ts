@@ -18,7 +18,6 @@ export class Auth {
     this.checkToken();
   }
 
-  // --- LOGIN ---
   login(credentials: {email: string, password: string}): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
@@ -38,7 +37,6 @@ export class Auth {
     return this.http.post<User>(`${this.apiUrl}/register`, payload);
   }
 
-  // --- LOGOUT ---
   logout(): void {
     localStorage.removeItem('token');
     this.currentUserSubject.next(null);
@@ -51,12 +49,12 @@ export class Auth {
     try {
       const decoded: any = jwtDecode(token);
       const currentTime = Date.now() / 1000;
-      
+
       if (decoded.exp && decoded.exp < currentTime) {
         this.logout();
         return false;
       }
-      
+
       return true;
     } catch (e) {
       this.logout();
