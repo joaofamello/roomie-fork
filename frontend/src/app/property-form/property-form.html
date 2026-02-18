@@ -1,0 +1,81 @@
+<div class="container">
+  <h2>Cadastrar Imóvel</h2>
+  
+  <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+    
+    <div class="form-group">
+      <label for="title">Título do Anúncio</label>
+      <input id="title" type="text" formControlName="title" class="form-control" placeholder="Ex: Quarto individual perto da UFAPE">
+      <div *ngIf="propertyForm.get('title')?.invalid && propertyForm.get('title')?.touched" class="error">
+        O título é obrigatório e deve ter entre 5 e 100 caracteres.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="type">Tipo de Imóvel</label>
+      <select id="type" formControlName="type" class="form-control">
+        <option [ngValue]="null" disabled>Selecione...</option>
+        <option *ngFor="let type of propertyTypes" [value]="type">
+          {{ getLabelForType(type) }}
+        </option>
+      </select>
+      <div *ngIf="propertyForm.get('type')?.invalid && propertyForm.get('type')?.touched" class="error">
+        Selecione um tipo.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Preço (R$)</label>
+      <input id="price" type="number" formControlName="price" class="form-control" placeholder="0.00">
+      <div *ngIf="propertyForm.get('price')?.invalid && propertyForm.get('price')?.touched" class="error">
+        O preço é obrigatório e deve ser positivo.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="vacancies">Nº de Quartos / Vagas</label>
+      <input id="vacancies" type="number" formControlName="availableVacancies" class="form-control">
+      <div *ngIf="propertyForm.get('availableVacancies')?.invalid && propertyForm.get('availableVacancies')?.touched" class="error">
+        Informe pelo menos 1 vaga.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição</label>
+      <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <hr>
+    <h3>Endereço</h3>
+    
+    <div formGroupName="address" class="address-group">
+      
+      <div class="form-group">
+        <label for="street">Rua</label>
+        <input id="street" type="text" formControlName="street" class="form-control">
+        <div *ngIf="propertyForm.get('address.street')?.invalid && propertyForm.get('address.street')?.touched" class="error">
+          Rua é obrigatória.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="district">Bairro</label>
+        <input id="district" type="text" formControlName="district" class="form-control">
+        <div *ngIf="propertyForm.get('address.district')?.invalid && propertyForm.get('address.district')?.touched" class="error">
+          Bairro é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cep">CEP</label>
+        <input id="cep" type="text" formControlName="cep" class="form-control" placeholder="00000-000">
+        <div *ngIf="propertyForm.get('address.cep')?.invalid && propertyForm.get('address.cep')?.touched" class="error">
+          CEP inválido.
+        </div>
+      </div>
+
+    </div>
+
+    <button type="submit" [disabled]="propertyForm.invalid">Salvar Imóvel</button>
+  </form>
+</div>

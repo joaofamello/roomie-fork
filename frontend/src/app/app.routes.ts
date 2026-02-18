@@ -3,6 +3,7 @@ import { authGuard } from './auth/auth-guard';
 import { Login } from './auth/login/login';
 import { Unauthorized } from './auth/unauthorized/unauthorized';
 import { Home } from './home/home';
+import { PropertyFormComponent } from './property-form/property-form'; 
 
 export const routes: Routes = [
   {
@@ -30,6 +31,13 @@ export const routes: Routes = [
     component: Home,
     canActivate: [authGuard],
     title: 'Início - Roomie'
+  },
+
+  {
+    path: 'properties/new', 
+    component: PropertyFormComponent,
+    canActivate: [authGuard], 
+    title: 'Novo Imóvel - Roomie'
   },
   {
     path: '**',
