@@ -3,7 +3,12 @@
 
     <header class="topbar-blue">
       <h2 class="logo-text">Roomie</h2>
-      <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
+      <div class="header-buttons">
+        <button class="profile-btn" (click)="goToCreateProperty()">+ Anunciar Imóvel</button>
+
+        <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
+        <button class="profile-btn" (click)="onLogout()">Sair</button>
+      </div>
     </header>
 
     <div class="hero-content">
@@ -28,7 +33,13 @@
 
     <header class="topbar-blue">
       <h2 class="logo-text" (click)="goBackHome()" style="cursor: pointer;" title="Voltar ao Início">Roomie</h2>
-      <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
+      <div class="header-buttons">
+        <button class="profile-btn" (click)="goToCreateProperty()">+ Anunciar Imóvel</button>
+
+        <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
+        <button class="profile-btn" (click)="onLogout()">Sair</button>
+      </div>
+      
     </header>
 
     <div class="search-section" [formGroup]="filterForm">

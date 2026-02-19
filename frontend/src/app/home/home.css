@@ -1,4 +1,3 @@
-/* === ESTILOS DA TELA INICIAL (HERO) === */
 
 .hero-container {
   display: flex;
@@ -54,7 +53,6 @@
   color: white;
 }
 
-/* A Barra de Busca Gigante */
 .big-search-box {
   display: flex;
   width: 100%;
@@ -106,19 +104,25 @@
 }
 
 /* === CABEÇALHO === */
-/* === HEADER AZUL (Usado em ambas as telas) === */
+/* === HEADER(Usado em ambas as telas) === */
 .topbar-blue {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0D83D7; /* Azul Principal */
+  background-color: #0D83D7; 
   padding: 15px 40px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   z-index: 10;
 }
 
+.header-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+
 .topbar-blue .logo-text {
-  color: white; /* Tipografia Branca */
+  color: white; 
   margin: 0;
   font-weight: 800;
   font-size: 26px;

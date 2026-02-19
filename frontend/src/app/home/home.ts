@@ -113,4 +113,9 @@ export class Home implements OnInit {
     this.auth.logout();
     this.router.navigate(['/login']);
   }
+
+  goToCreateProperty() {
+    this.router.navigate(['/properties/new']);
+  
+  }
 }

@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,4 +19,5 @@ export class PropertyService {
     });
     return this.http.get(this.apiUrl, { params });
   }
+
 }

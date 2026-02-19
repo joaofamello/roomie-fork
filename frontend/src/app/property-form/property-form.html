@@ -1,3 +1,11 @@
+<header class="topbar-blue">
+  <h2 class="logo-text" (click)="goBackHome()" style="cursor: pointer;" title="Voltar ao Início">Roomie</h2>
+  <div class="header-buttons">
+    <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
+    <button class="profile-btn" (click)="onLogout()">Sair</button>
+  </div>
+</header>
+
 <div class="container">
   <h2>Cadastrar Imóvel</h2>
   
@@ -76,6 +84,25 @@
 
     </div>
 
-    <button type="submit" [disabled]="propertyForm.invalid">Salvar Imóvel</button>
+    <hr>
+    <h3>Fotos do Imóvel</h3>
+      
+    <div class="image-upload-section">
+      <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+        Adicione fotos para destacar seu anúncio.
+      </p>
+        
+      <button type="button" class="btn-image" (click)="toggleImageUpload()">
+          📸 Inserir Imagens
+      </button>
+
+      <div *ngIf="showImageUpload" style="margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 8px;">
+        <p style="color: #666; margin: 0;"><em>Módulo de upload de imagens em desenvolvimento</em></p>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="propertyForm.invalid || isSubmitting">
+      {{ isSubmitting ? 'Salvando...' : 'Salvar Imóvel' }}
+    </button>
   </form>
 </div>

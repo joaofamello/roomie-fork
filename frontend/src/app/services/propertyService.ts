@@ -15,4 +15,11 @@ export class PropertyService {
   getAll(): Observable<Property[]> {
     return this.http.get<Property[]>(this.apiUrl);
   }
+
+  createProperty(propertyData: any): Observable<any> {
+    return this.http.post(this.apiUrl, propertyData);
+  }
+  
+
 }
+
