@@ -28,18 +28,32 @@ export class PropertyFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.propertyForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]], 
+      title: ['', [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(100)
+      ]], // @Size(min=5, max=100)
+
       description: [''],
-      price: [null, [Validators.required, Validators.min(0.01)]], 
-      availableVacancies: [null, [Validators.required, Validators.min(1)]], 
+
+      price: [null, [
+        Validators.required,
+        Validators.min(0.01)
+      ]], // @Positive
+
+      availableVacancies: [null, [
+        Validators.required,
+        Validators.min(1)
+      ]], // numero de quartos mapeado para availableVacancies (@Min(1))
+
       type: [null, [Validators.required]],
       address: this.fb.group({
         street: ['', Validators.required],
         district: ['', Validators.required],
-        cep: ['', [Validators.required, Validators.pattern(/^\d{5}-?\d{3}$/)]] 
+        cep: ['', [Validators.required, Validators.pattern(/^\d{5}-?\d{3}$/)]]
       }),
-      acceptAnimals: [false], 
-      gender: ['ANY'] 
+      acceptAnimals: [false],
+      gender: ['ANY']
     });
   }
 
@@ -87,8 +101,9 @@ export class PropertyFormComponent implements OnInit {
     switch (type) {
       case PropertyType.HOUSE: return 'Casa';
       case PropertyType.APARTMENT: return 'Apartamento';
-      case PropertyType.STUDIO: return 'República'; 
+      case PropertyType.STUDIO: return 'Studio';
       case PropertyType.ROOM: return 'Quarto';
+      case PropertyType.DORMITORY: return 'República';
       default: return type;
     }
   }

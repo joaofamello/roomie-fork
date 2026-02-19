@@ -1,6 +1,7 @@
 export enum PropertyType {
   HOUSE = 'HOUSE',
   APARTMENT = 'APARTMENT',
-  STUDIO = 'STUDIO', // utilizado como república
-  ROOM = 'ROOM'
+  STUDIO = 'STUDIO',
+  ROOM = 'ROOM',
+  DORMITORY = 'DORMITORY'
 }
