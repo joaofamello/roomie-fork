@@ -8,7 +8,7 @@ import { Property } from '../models/property';
   providedIn: 'root',
 })
 export class PropertyService {
-  private apiUrl = 'http://localhost:8080/properties';
+  private apiUrl = 'http://localhost:8080/api/properties';
 
   constructor(private http:HttpClient){}
 
@@ -19,7 +19,6 @@ export class PropertyService {
   createProperty(propertyData: any): Observable<any> {
     return this.http.post(this.apiUrl, propertyData);
   }
-  
 
 }
 

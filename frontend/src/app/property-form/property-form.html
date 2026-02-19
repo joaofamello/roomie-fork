@@ -8,9 +8,9 @@
 
 <div class="container">
   <h2>Cadastrar Imóvel</h2>
-  
+
   <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
-    
+
     <div class="form-group">
       <label for="title">Título do Anúncio</label>
       <input id="title" type="text" formControlName="title" class="form-control" placeholder="Ex: Quarto individual perto da UFAPE">
@@ -55,14 +55,22 @@
 
     <hr>
     <h3>Endereço</h3>
-    
+
     <div formGroupName="address" class="address-group">
-      
+
       <div class="form-group">
         <label for="street">Rua</label>
         <input id="street" type="text" formControlName="street" class="form-control">
         <div *ngIf="propertyForm.get('address.street')?.invalid && propertyForm.get('address.street')?.touched" class="error">
-          Rua é obrigatória.
+          A rua é obrigatória.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="number">Número</label>
+        <input id="number" type="text" formControlName="number" class="form-control">
+        <div *ngIf="propertyForm.get('address.number')?.invalid && propertyForm.get('address.number')?.touched" class="error">
+          O número é obrigatório.
         </div>
       </div>
 
@@ -70,7 +78,23 @@
         <label for="district">Bairro</label>
         <input id="district" type="text" formControlName="district" class="form-control">
         <div *ngIf="propertyForm.get('address.district')?.invalid && propertyForm.get('address.district')?.touched" class="error">
-          Bairro é obrigatório.
+          O bairro é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="city">Cidade</label>
+        <input id="city" type="text" formControlName="city" class="form-control">
+        <div *ngIf="propertyForm.get('address.city')?.invalid && propertyForm.get('address.city')?.touched" class="error">
+          A cidade é obrigatória.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="state">Estado</label>
+        <input id="state" type="text" formControlName="state" class="form-control" placeholder="Ex: PE">
+        <div *ngIf="propertyForm.get('address.state')?.invalid && propertyForm.get('address.state')?.touched" class="error">
+          O estado é obrigatório.
         </div>
       </div>
 
@@ -78,20 +102,19 @@
         <label for="cep">CEP</label>
         <input id="cep" type="text" formControlName="cep" class="form-control" placeholder="00000-000">
         <div *ngIf="propertyForm.get('address.cep')?.invalid && propertyForm.get('address.cep')?.touched" class="error">
-          CEP inválido.
+          O CEP é inválido.
         </div>
       </div>
-
     </div>
 
     <hr>
     <h3>Fotos do Imóvel</h3>
-      
+
     <div class="image-upload-section">
       <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
         Adicione fotos para destacar seu anúncio.
       </p>
-        
+
       <button type="button" class="btn-image" (click)="toggleImageUpload()">
           📸 Inserir Imagens
       </button>

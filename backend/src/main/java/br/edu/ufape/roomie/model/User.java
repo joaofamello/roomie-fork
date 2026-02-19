@@ -1,5 +1,6 @@
 package br.edu.ufape.roomie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,12 @@ public class User implements UserDetails {
 
     @Column(name = "email", unique = true)
     private String email;
-    
+
+    @JsonIgnore
     @Column(name = "cpf", unique = true)
     private String cpf;
 
+    @JsonIgnore
     @Column(name = "senha")
     private String password;
 
@@ -43,6 +46,7 @@ public class User implements UserDetails {
     @Column(name = "cargo")
     private UserRole role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Telefone> telefones = new ArrayList<>();
 

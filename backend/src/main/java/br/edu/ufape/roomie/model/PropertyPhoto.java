@@ -1,5 +1,6 @@
 package br.edu.ufape.roomie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class PropertyPhoto {
     @Column(name = "id_imagem")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_imovel", nullable = false)
     private Property property;

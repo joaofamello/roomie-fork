@@ -4,22 +4,20 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Auth } from '../auth/auth';
 import { PropertyType } from '../models/property-type.enum';
-import { PropertyService } from '../services/propertyService'; // Ajuste o caminho se necessário
+import { PropertyService } from '../services/propertyService';
 
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './property-form.html',
   styleUrls: ['./property-form.css']
 })
 export class PropertyFormComponent implements OnInit {
   propertyForm!: FormGroup;
   propertyTypes = Object.values(PropertyType);
-
   showImageUpload: boolean = false;
-  isSubmitting: boolean = false; 
-
+  isSubmitting: boolean = false;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -28,32 +26,23 @@ export class PropertyFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.propertyForm = this.fb.group({
-      title: ['', [
-        Validators.required,
-        Validators.minLength(5),
-        Validators.maxLength(100)
-      ]], // @Size(min=5, max=100)
-
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       description: [''],
-
-      price: [null, [
-        Validators.required,
-        Validators.min(0.01)
-      ]], // @Positive
-
-      availableVacancies: [null, [
-        Validators.required,
-        Validators.min(1)
-      ]], // numero de quartos mapeado para availableVacancies (@Min(1))
-
+      price: [null, [Validators.required, Validators.min(0.01)]],
+      availableVacancies: [null, [Validators.required, Validators.min(1)]],
       type: [null, [Validators.required]],
+
       address: this.fb.group({
         street: ['', Validators.required],
+        number: ['', Validators.required],
         district: ['', Validators.required],
+        city: ['', Validators.required],
+        state: ['', Validators.required],
         cep: ['', [Validators.required, Validators.pattern(/^\d{5}-?\d{3}$/)]]
       }),
+
       acceptAnimals: [false],
-      gender: ['ANY']
+      gender: ['MIXED']
     });
   }
 
@@ -61,16 +50,23 @@ export class PropertyFormComponent implements OnInit {
     this.showImageUpload = !this.showImageUpload;
   }
 
-  // === INTEGRAÇÃO COM O BACK-END ===
   onSubmit(): void {
     if (this.propertyForm.valid) {
       this.isSubmitting = true;
-      
-      this.propertyService.createProperty(this.propertyForm.value).subscribe({
+
+      const formData = new FormData();
+      formData.append('data', new Blob([JSON.stringify(this.propertyForm.value)], {
+        type: 'application/json'
+      }));
+
+      // TO-DO: Adicionar fotos aqui iterando sobre um array de ficheiros:
+      // formData.append('photos', ficheiroUpload);
+
+      this.propertyService.createProperty(formData).subscribe({
         next: (response) => {
           alert('Imóvel cadastrado com sucesso!');
           this.isSubmitting = false;
-          this.router.navigate(['/home']); 
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Erro ao salvar imóvel:', err);
@@ -78,7 +74,6 @@ export class PropertyFormComponent implements OnInit {
           this.isSubmitting = false;
         }
       });
-
     } else {
       this.propertyForm.markAllAsTouched();
     }
