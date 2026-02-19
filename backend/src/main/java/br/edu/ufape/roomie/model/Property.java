@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Imovel")
 @Data
@@ -49,4 +52,7 @@ public class Property {
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL)
     private Address address;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyPhoto> photos = new ArrayList<>();
 }

@@ -15,14 +15,18 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,10 +43,10 @@ class PropertyControllerTest {
     private PropertyService propertyService;
 
     @Test
-    @DisplayName("Deveria devolver código HTTP 400 quando informações estão inválidas")
+    @DisplayName("Deveria devolver código HTTP 400 quando requisição não possui a parte 'data' obrigatória")
     @WithMockUser
     void testaCriarPropriedadeComDadosInvalidos() throws Exception {
-        var response = mvc.perform(post("/api/properties")).andReturn().getResponse();
+        var response = mvc.perform(multipart("/api/properties")).andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
@@ -69,16 +73,31 @@ class PropertyControllerTest {
         validDto.setAvailableVacancies(2);
         validDto.setAddress(addressDTO);
 
+        String dtoJson = propertyRequestDTOJacksonTester.write(validDto).getJson();
+        MockMultipartFile dataPart = new MockMultipartFile(
+                "data",
+                "",
+                MediaType.APPLICATION_JSON_VALUE,
+                dtoJson.getBytes(StandardCharsets.UTF_8)
+        );
+
+        MockMultipartFile photoPart = new MockMultipartFile(
+                "photos",
+                "quarto.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "conteudo-fake-da-imagem".getBytes()
+        );
+
         Property mockProperty = new Property();
         mockProperty.setId(1L);
-        when(propertyService.createProperty(any(PropertyRequestDTO.class))).thenReturn(mockProperty);
+        when(propertyService.createProperty(any(PropertyRequestDTO.class), anyList())).thenReturn(mockProperty);
 
-        var response = mvc.perform(post("/api/properties")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(propertyRequestDTOJacksonTester.write(validDto).getJson()))
+        var response = mvc.perform(multipart("/api/properties")
+                        .file(dataPart)
+                        .file(photoPart)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
     }
-
 }

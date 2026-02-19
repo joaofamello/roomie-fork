@@ -17,9 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +34,9 @@ class PropertyServiceTest {
 
     @Mock
     private PropertyRepository propertyRepository;
+
+    @Mock
+    private FileStorageService fileStorageService;
 
     @InjectMocks
     private PropertyService propertyService;
@@ -68,10 +75,16 @@ class PropertyServiceTest {
     }
 
     @Test
-    @DisplayName("Deve criar um imóvel com endereço e status DRAFT com sucesso")
+    @DisplayName("Deve criar um imóvel com endereço, fotos e status DRAFT com sucesso")
     void shouldCreatePropertyWithFullDetailsSuccessfully() {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(mockOwner, null, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
+
+        MockMultipartFile mockPhoto = new MockMultipartFile(
+                "photos", "quarto.jpg", "image/jpeg", "image_bytes".getBytes());
+        List<MultipartFile> photosList = List.of(mockPhoto);
+
+        when(fileStorageService.storeFile(any(MultipartFile.class))).thenReturn("uuid-gerado-quarto.jpg");
 
         when(propertyRepository.save(any(Property.class))).thenAnswer(invocation -> {
             Property p = invocation.getArgument(0);
@@ -79,7 +92,7 @@ class PropertyServiceTest {
             return p;
         });
 
-        Property result = propertyService.createProperty(validDto);
+        Property result = propertyService.createProperty(validDto, photosList);
 
         assertNotNull(result);
         assertEquals(10L, result.getId());
@@ -93,7 +106,13 @@ class PropertyServiceTest {
 
         assertEquals(result, result.getAddress().getProperty());
 
+        assertNotNull(result.getPhotos());
+        assertEquals(1, result.getPhotos().size());
+        assertEquals("/images/uuid-gerado-quarto.jpg", result.getPhotos().get(0).getPath());
+        assertEquals(result, result.getPhotos().get(0).getProperty());
+
         verify(propertyRepository, times(1)).save(any(Property.class));
+        verify(fileStorageService, times(1)).storeFile(any(MultipartFile.class));
     }
 
     @Test
@@ -102,12 +121,13 @@ class PropertyServiceTest {
         SecurityContextHolder.clearContext();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            propertyService.createProperty(validDto);
+            propertyService.createProperty(validDto, null);
         });
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         assertEquals("Usuário não autenticado.", exception.getReason());
 
         verify(propertyRepository, never()).save(any());
+        verify(fileStorageService, never()).storeFile(any());
     }
 }
