@@ -1,0 +1,46 @@
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.price {
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.neighborhood {
+  font-size: 14px;
+  color: #666;
+}
+
+.residents {
+  margin-top: 10px;
+  display: flex;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: -8px;
+  border: 2px solid #fff;
+}

@@ -1,0 +1,14 @@
+<div *ngIf="loading">
+  Carregando imóveis...
+</div>
+
+<div *ngIf="!loading && properties.length == 0">
+  Nenhum resultado encontrado
+</div>
+
+<div class="grid" *ngIf="!loading && properties.length > 0">
+  <app-property-card
+    *ngFor="let property of properties"
+    [property]="property">
+  </app-property-card>
+</div>

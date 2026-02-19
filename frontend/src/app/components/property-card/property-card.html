@@ -1,0 +1,35 @@
+<div class="card">
+  <img
+    *ngIf="property.mainPhotoUrl"
+    [src]="property.mainPhotoUrl"
+    alt="Foto do imóvel"
+    class="card-image"
+  />
+
+  <div class="card-body">
+    <h3>{{ property.title }}</h3>
+
+    <p class="price">
+      R$ {{ property.price | number:'1.0-0' }}
+    </p>
+
+    <p class="neighborhood">
+      {{ property.neighborhood }}
+    </p>
+
+  </div>
+
+  <div
+    class="residents"
+    *ngIf="property.activeResidents?.length"
+  >
+    <img
+      *ngFor="let resident of property.activeResidents"
+      [src]="resident.avatarUrl"
+      [alt]="resident.name"
+      class="avatar"
+      [title]="resident.name"
+    />
+  </div>
+
+</div>

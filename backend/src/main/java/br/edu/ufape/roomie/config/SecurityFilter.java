@@ -35,9 +35,10 @@ public class SecurityFilter  extends OncePerRequestFilter{
         if (header != null && header.startsWith("Bearer ")){
             String token = header.replace("Bearer ", ""); 
             String email = tokenService.validateToken(token); 
+            System.out.println("Email do token: " + email);
 
 
-            if(!email.isEmpty()){
+            if(email != null && !email.isBlank()){
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email); 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
