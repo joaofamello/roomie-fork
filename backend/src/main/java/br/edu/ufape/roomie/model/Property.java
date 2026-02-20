@@ -37,6 +37,7 @@ public class Property {
     @Column(nullable = false, name = "preco")
     private Double price;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "genero_moradores", nullable = false)
     private UserGender gender;
 

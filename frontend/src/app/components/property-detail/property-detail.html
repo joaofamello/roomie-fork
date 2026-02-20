@@ -1,0 +1,67 @@
+<div class="modal-overlay" (click)="closeOnOverlay($event)">
+  <div class="modal-panel">
+
+    <button class="close-btn" (click)="closed.emit()">✕</button>
+
+    <!-- Galeria de fotos -->
+    <div class="gallery" *ngIf="photos.length > 0; else noPhotos">
+      <img class="main-photo" [src]="selectedPhotoUrl" alt="Foto do imóvel" />
+      <div class="thumbnails" *ngIf="photos.length > 1">
+        <img
+          *ngFor="let photo of photos; let i = index"
+          [src]="apiBase + photo.path"
+          [class.active]="i === selectedPhotoIndex"
+          (click)="selectPhoto(i)"
+          alt="Miniatura {{ i + 1 }}"
+        />
+      </div>
+    </div>
+    <ng-template #noPhotos>
+      <div class="no-photo-banner">Sem fotos disponíveis</div>
+    </ng-template>
+
+    <!-- Informações -->
+    <div class="detail-body">
+      <div class="detail-header">
+        <h2>{{ property.title }}</h2>
+        <span class="price">R$ {{ property.price | number:'1.0-0' }}<span class="per-month">/mês</span></span>
+      </div>
+
+      <p class="description" *ngIf="property.description">{{ property.description }}</p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Tipo</span>
+          <span class="value">{{ typeLabel(property.type) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Vagas disponíveis</span>
+          <span class="value">{{ property.availableVacancies ?? '—' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Perfil dos moradores</span>
+          <span class="value">{{ genderLabel(property.gender) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Aceita animais</span>
+          <span class="value">{{ property.acceptAnimals ? 'Sim' : 'Não' }}</span>
+        </div>
+      </div>
+
+      <div class="address-block" *ngIf="property.address">
+        <h3>Localização</h3>
+        <p>
+          {{ property.address.street }}, {{ property.address.number }} —
+          {{ property.address.district }}, {{ property.address.city }} / {{ property.address.state }}
+        </p>
+        <p class="cep">CEP: {{ property.address.cep }}</p>
+      </div>
+
+      <div class="owner-block" *ngIf="property.owner">
+        <h3>Anunciante</h3>
+        <p>{{ property.owner.name }}</p>
+      </div>
+    </div>
+
+  </div>
+</div>

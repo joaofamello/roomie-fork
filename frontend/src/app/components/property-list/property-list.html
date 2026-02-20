@@ -9,6 +9,13 @@
 <div class="grid" *ngIf="!loading && properties.length > 0">
   <app-property-card
     *ngFor="let property of properties"
-    [property]="property">
+    [property]="property"
+    (propertySelected)="openDetail($event)">
   </app-property-card>
 </div>
+
+<app-property-detail
+  *ngIf="selectedProperty"
+  [property]="selectedProperty"
+  (closed)="closeDetail()">
+</app-property-detail>

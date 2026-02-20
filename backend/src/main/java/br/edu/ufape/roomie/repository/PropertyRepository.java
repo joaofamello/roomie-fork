@@ -10,20 +10,17 @@ import java.util.List;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-    @Query("SELECT p FROM Property p " +
-            "JOIN p.address a " +
-            "WHERE (:city IS NULL OR a.city = :city) " +
-            "AND (:state IS NULL OR a.state = :state) " +
-            "AND (:district IS NULL OR a.district = :district) " +
-            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
-            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-            "AND (:availableVacancies IS NULL OR p.availableVacancies >= :availableVacancies) ")
+    @Query("SELECT p FROM Property p LEFT JOIN p.address a " +
+            "WHERE (:location = '[ALL]' OR LOWER(a.city) LIKE LOWER(CONCAT('%', :location, '%'))) " +
+            "AND (:district = '[ALL]' OR LOWER(a.district) LIKE LOWER(CONCAT('%', :district, '%'))) " +
+            "AND (:minPrice < 0 OR p.price >= :minPrice) " +
+            "AND (:maxPrice < 0 OR p.price <= :maxPrice) " +
+            "AND (:type = '[ALL]' OR CAST(p.type AS string) = :type) ")
     List<Property> findWithFilters(
-        @Param("city") String city,
-        @Param("state") String state,
+        @Param("location") String location,
         @Param("district") String district,
-        @Param("minPrice") Double minPrice,
-        @Param("maxPrice") Double maxPrice,
-        @Param("availableVacancies") Integer availableVacancies
+        @Param("minPrice") double minPrice,
+        @Param("maxPrice") double maxPrice,
+        @Param("type") String type
     );
 }

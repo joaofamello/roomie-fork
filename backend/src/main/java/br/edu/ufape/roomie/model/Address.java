@@ -27,15 +27,15 @@ public class Address {
     )
     private Property property;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "rua", nullable = false, length = 100)
     private  String street;
-    @Column(nullable = false, length = 100)
+    @Column(name = "bairro", nullable = false, length = 100)
     private String district;
-    @Column(nullable = false, length = 10)
+    @Column(name = "numero", nullable = false, length = 10)
     private String number;
-    @Column(nullable = false, length = 50)
+    @Column(name = "cidade", nullable = false, length = 50)
     private String city;
-    @Column(nullable = false, length = 50)
+    @Column(name = "estado", nullable = false, length = 50)
     private String state;
     @Column(nullable = false, length = 20)
     private String cep;

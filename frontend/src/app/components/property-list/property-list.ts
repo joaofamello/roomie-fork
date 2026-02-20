@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { PropertyService } from '../../services/propertyService';
 import { Property } from '../../models/property';
 import { PropertyCard } from '../property-card/property-card';
+import { PropertyDetail } from '../property-detail/property-detail';
 
 @Component({
   selector: 'app-property-list',
   standalone: true,
-  imports: [CommonModule, PropertyCard],
+  imports: [CommonModule, PropertyCard, PropertyDetail],
   templateUrl: './property-list.html',
   styleUrl: './property-list.css',
 })
@@ -15,11 +16,11 @@ export class PropertyList implements OnInit {
   @Input() properties: Property[] = [];
   @Input() loading = false;
 
+  selectedProperty: Property | null = null;
+
   constructor(private propertyService: PropertyService) {}
 
-  ngOnInit(): void {
-      this.loadProperties();
-  }
+  ngOnInit(): void {}
 
   loadProperties(){
     this.loading = true;
@@ -34,5 +35,13 @@ export class PropertyList implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  openDetail(property: Property): void {
+    this.selectedProperty = property;
+  }
+
+  closeDetail(): void {
+    this.selectedProperty = null;
   }
 }

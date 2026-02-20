@@ -44,11 +44,11 @@
 
     <div class="search-section" [formGroup]="filterForm">
       <div class="search-bar">
-        <input 
-          type="text" 
-          formControlName="location" 
-          placeholder="Buscar cidade ou bairro..."
-          (keyup.enter)="onFilter()" 
+        <input
+          type="text"
+          formControlName="location"
+          placeholder="Buscar por cidade..."
+          (keyup.enter)="onFilter()"
         />
         <button class="btn-search" (click)="onFilter()">Buscar</button>
       </div>
@@ -58,6 +58,11 @@
       <aside class="sidebar">
         <h3>Filtros</h3>
         <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+
+          <div class="filter-group">
+            <label>Bairro</label>
+            <input type="text" formControlName="district" placeholder="Ex: Boa Vista" />
+          </div>
 
           <div class="filter-group price-group">
             <div>
@@ -81,7 +86,7 @@
             </select>
           </div>
 
-          <button type="submit" class="btn-filter">Aplicar Filtros</button>
+          <button type="button" class="btn-filter" (click)="onFilter()">Aplicar Filtros</button>
         </form>
       </aside>
 

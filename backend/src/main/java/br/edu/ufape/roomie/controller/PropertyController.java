@@ -35,8 +35,20 @@ public class PropertyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Property>> getAll() {
-        List<Property> properties = propertyRepository.findAll();
+    public ResponseEntity<List<Property>> getAll(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String propertyType
+    ) {
+        String loc  = (location != null && !location.isBlank()) ? location : "[ALL]";
+        String dist = (district != null && !district.isBlank()) ? district : "[ALL]";
+        double min  = (minPrice != null) ? minPrice : -1.0;
+        double max  = (maxPrice != null) ? maxPrice : -1.0;
+        String type = (propertyType != null && !propertyType.isBlank()) ? propertyType.toUpperCase() : "[ALL]";
+
+        List<Property> properties = propertyRepository.findWithFilters(loc, dist, min, max, type);
         return ResponseEntity.ok(properties);
     }
 

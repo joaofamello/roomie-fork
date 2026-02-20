@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PropertyService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/properties'; 
+  private apiUrl = 'http://localhost:8080/api/properties';
 
   buscarComFiltros(filtros: any) {
     let params = new HttpParams();
