@@ -24,26 +24,26 @@ public class User implements UserDetails {
     @Column(name = "id_usuario")
     private Long id;
 
-    @Column(name = "nome")
+    @Column(name = "nome", nullable = false)
     private String name;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @JsonIgnore
-    @Column(name = "cpf", unique = true)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
 
     @JsonIgnore
-    @Column(name = "senha")
+    @Column(name = "senha", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "genero")
+    @Column(name = "genero", nullable = false)
     private UserGender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "cargo")
+    @Column(name = "cargo", nullable = false)
     private UserRole role;
 
     @JsonIgnore
