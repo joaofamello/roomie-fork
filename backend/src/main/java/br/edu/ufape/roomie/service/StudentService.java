@@ -1,13 +1,13 @@
 package br.edu.ufape.roomie.service;
 
-import br.edu.ufape.roomie.model.User;
-import br.edu.ufape.roomie.repository.StudentRepository;
-import br.edu.ufape.roomie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import br.edu.ufape.roomie.repository.StudentRepository;
+import br.edu.ufape.roomie.repository.UserRepository;
 
 @Service
 public class StudentService {
@@ -20,7 +20,7 @@ public class StudentService {
 
     @Transactional
     public void promoteUserToStudent(Long userId, String major, String institution) {
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado!"));
 
         studentRepository.promoteUserToStudent(userId, major, institution);
