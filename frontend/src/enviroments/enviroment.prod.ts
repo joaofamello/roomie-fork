@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://roomie-backend-y3lf.onrender.com'
+  apiUrl: 'https://roomie-dp98.onrender.com'
 };

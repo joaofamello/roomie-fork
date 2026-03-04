@@ -52,8 +52,8 @@ A aplicação está disponível nos seguintes ambientes de produção:
 
 | Serviço     | URL                                                                                  |
 |:------------|:-------------------------------------------------------------------------------------|
-| Frontend    | [https://roomie-itvz.onrender.com](https://roomie-itvz.onrender.com)                 |
-| Backend API | [https://roomie-backend-fom2.onrender.com](https://roomie-backend-fom2.onrender.com) |
+| Frontend    | [https://roomie-front.onrender.com](https://roomie-front.onrender.com)                 |
+| Backend API | [https://roomie-dp98.onrender.com](https://roomie-dp98.onrender.com) |
 
 ---
 
