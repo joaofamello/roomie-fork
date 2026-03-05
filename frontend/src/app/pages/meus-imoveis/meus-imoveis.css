@@ -173,6 +173,30 @@
   transform: translateY(-2px);
 }
 
+/* Card expandido: ocupa a linha inteira do grid e vira flex-row */
+.card-expanded {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  transform: none !important;
+}
+
+/* Coluna esquerda: info do imóvel */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.card-expanded .card-body {
+  width: 260px;
+  min-width: 220px;
+  padding-right: 20px;
+  border-right: 1px solid #e5eef7;
+}
+
 .property-card-header {
   display: flex;
   align-items: flex-start;
@@ -461,3 +485,208 @@
     width: 95%;
   }
 }
+
+/* ── Botão Candidatos ── */
+.btn-candidates {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 16px;
+  border: 1.5px solid #0D83D7;
+  border-radius: 8px;
+  background: #fff;
+  color: #0D83D7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  margin-top: 6px;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-candidates:hover,
+.btn-candidates.active {
+  background: #0D83D7;
+  color: #fff;
+}
+
+.btn-candidates .chevron {
+  font-size: 18px;
+  margin-left: auto;
+}
+
+/* ── Painel de candidatos ── */
+.interests-panel {
+  flex: 1;
+  min-width: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.interests-panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.interests-panel-title .material-icons {
+  font-size: 18px;
+  color: #0D83D7;
+}
+
+.interests-loading,
+.interests-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #888;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.interests-empty {
+  flex-direction: column;
+  text-align: center;
+}
+
+.interests-empty .material-icons {
+  font-size: 36px;
+  color: #ccc;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* ── Tabela de candidatos ── */
+.interests-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 500px;
+}
+
+.interests-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: #f4f7fb;
+  color: #555;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 2px solid #e5eef7;
+  white-space: nowrap;
+}
+
+.interests-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid #f0f3f8;
+  vertical-align: middle;
+  color: #333;
+}
+
+.interests-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+.interests-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Wrapper para scroll horizontal em telas menores */
+.interests-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e5eef7;
+}
+
+/* ── Badge de status de interesse ── */
+.interest-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.interest-pending  { background: #fff3cd; color: #856404; }
+.interest-accepted { background: #d1e7dd; color: #155724; }
+.interest-rejected { background: #f8d7da; color: #721c24; }
+
+/* ── Botões de ação na tabela ── */
+.interests-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-accept,
+.btn-reject {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.btn-accept:hover,
+.btn-reject:hover {
+  opacity: 0.82;
+  transform: scale(1.1);
+}
+
+.btn-accept {
+  background: #d1e7dd;
+  color: #155724;
+}
+
+.btn-reject {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-accept .material-icons,
+.btn-reject .material-icons {
+  font-size: 18px;
+}
+
+/* Responsivo: em mobile o painel vira coluna */
+@media (max-width: 640px) {
+  .card-expanded {
+    flex-direction: column;
+  }
+
+  .card-expanded .card-body {
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid #e5eef7;
+    padding-bottom: 16px;
+  }
+
+  .interests-panel {
+    padding-left: 0;
+    padding-top: 16px;
+  }
+}
+
+
