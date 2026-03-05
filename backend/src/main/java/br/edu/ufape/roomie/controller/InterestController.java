@@ -1,5 +1,7 @@
 package br.edu.ufape.roomie.controller;
 
+import br.edu.ufape.roomie.dto.InterestSummaryDTO;
+import br.edu.ufape.roomie.enums.InterestStatus;
 import br.edu.ufape.roomie.model.Student;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.service.InterestService;
@@ -7,10 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/announcements")
@@ -38,4 +39,34 @@ public class InterestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 404
         }
     }
+
+    @GetMapping("/{id}/interests")
+    public ResponseEntity<?> getInterests(
+            @PathVariable("id") Long propertyId,
+            @AuthenticationPrincipal User loggedInUser) {
+        try {
+            List<InterestSummaryDTO> interests = interestService.listInterestsForProperty(propertyId, loggedInUser);
+            return ResponseEntity.ok(interests);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/interests/{interestId}/status")
+    public ResponseEntity<String> updateStatus(
+            @PathVariable Long interestId,
+            @RequestParam("status") InterestStatus status,
+            @AuthenticationPrincipal User loggedInUser) {
+        try {
+            interestService.updateInterestStatus(interestId, status, loggedInUser);
+            return ResponseEntity.ok("Status da proposta atualizado para " + status);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 }
