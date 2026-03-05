@@ -1,0 +1,105 @@
+<!-- Floating toggle button — só aparece autenticado e com chats -->
+<button class="fab" (click)="toggle()" aria-label="Abrir conversas" *ngIf="showFab && state === 'closed'">
+  <span class="material-icons">chat</span>
+  <span class="fab-badge" *ngIf="totalUnread > 0">
+    {{ totalUnread > 99 ? '99+' : totalUnread }}
+  </span>
+</button>
+
+<!-- Chat popup panel — só aparece autenticado -->
+<div class="widget-panel" *ngIf="isAuthenticated && state !== 'closed'">
+
+  <!-- ── LIST VIEW ── -->
+  <ng-container *ngIf="state === 'list'">
+    <div class="panel-header">
+      <span class="panel-title">Conversas</span>
+      <button class="btn-icon" (click)="close()" aria-label="Fechar">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="panel-body">
+      <div class="loading-row" *ngIf="isLoadingChats">
+        <span class="material-icons spinning">sync</span>
+      </div>
+
+      <div class="empty-chats" *ngIf="!isLoadingChats && chats.length === 0">
+        <span class="material-icons">chat_bubble_outline</span>
+        <p>Nenhuma conversa ainda</p>
+      </div>
+
+      <div
+        class="chat-row"
+        *ngFor="let chat of chats"
+        (click)="selectChat(chat)"
+        (keydown.enter)="selectChat(chat)"
+        tabindex="0"
+        role="button">
+        <div class="row-avatar">
+          <span class="material-icons">person</span>
+        </div>
+        <div class="row-info">
+          <span class="row-name">{{ otherName(chat) }}</span>
+          <span class="row-property">{{ chat.propertyTitle }}</span>
+        </div>
+        <span class="row-badge" *ngIf="chat.unreadCount > 0">{{ chat.unreadCount }}</span>
+        <span class="material-icons row-chevron">chevron_right</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ── CHAT VIEW ── -->
+  <ng-container *ngIf="state === 'chat'">
+    <div class="panel-header">
+      <button class="btn-icon" (click)="backToList()" aria-label="Voltar">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div class="header-info" *ngIf="activeChat">
+        <span class="panel-title">{{ otherName(activeChat) }}</span>
+        <span class="header-sub">{{ activeChat.propertyTitle }}</span>
+      </div>
+      <button class="btn-icon" (click)="close()" aria-label="Fechar">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="messages-area" #msgContainer>
+      <div class="loading-row" *ngIf="isLoadingMessages">
+        <span class="material-icons spinning">sync</span>
+      </div>
+
+      <div class="no-messages" *ngIf="!isLoadingMessages && messages.length === 0">
+        <p>Nenhuma mensagem. Diga olá! 👋</p>
+      </div>
+
+      <div
+        *ngFor="let msg of messages"
+        class="msg-wrap"
+        [class.mine]="isMine(msg)"
+        [class.theirs]="!isMine(msg)">
+        <div class="bubble">
+          <span class="bubble-text">{{ msg.content }}</span>
+          <span class="bubble-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-bar">
+      <textarea
+        class="msg-input"
+        [(ngModel)]="newMessage"
+        (keydown)="onKeydown($event)"
+        placeholder="Mensagem..."
+        rows="1"
+        [disabled]="isSending">
+      </textarea>
+      <button class="btn-send" (click)="sendMessage()" [disabled]="!newMessage.trim() || isSending">
+        <span class="material-icons">{{ isSending ? 'hourglass_empty' : 'send' }}</span>
+      </button>
+    </div>
+  </ng-container>
+
+</div>
+
+
+

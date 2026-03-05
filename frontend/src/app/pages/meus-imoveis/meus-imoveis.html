@@ -189,6 +189,12 @@
                     (click)="updateCandidateStatus(interest.interestId, InterestStatus.REJECTED, property.idImovel)">
                     <span class="material-icons">close</span>
                   </button>
+                  <button
+                    class="btn-chat"
+                    title="Iniciar conversa"
+                    (click)="startChat(interest.studentId, property.idImovel)">
+                    <span class="material-icons">chat</span>
+                  </button>
                 </td>
               </tr>
             </tbody>

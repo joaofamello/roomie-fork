@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/propertyService';
 import { UserService } from '../../services/user.service';
 import { InterestService } from '../../services/interest.service';
+import { ChatService } from '../../services/chat.service';
+import { ChatWidgetService } from '../../services/chat-widget.service';
 import { Auth } from '../../auth/auth';
 import { PropertyDetailView } from '../../models/property-detail-view';
 import { OwnerReportView } from '../../models/owner-report-view';
@@ -39,6 +41,8 @@ export class MeusImoveis implements OnInit {
     private readonly propertyService: PropertyService,
     private readonly userService: UserService,
     private readonly interestService: InterestService,
+    private readonly chatService: ChatService,
+    private readonly chatWidgetService: ChatWidgetService,
     private readonly auth: Auth,
     private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
@@ -258,5 +262,20 @@ export class MeusImoveis implements OnInit {
       [InterestStatus.REJECTED]: 'interest-rejected'
     };
     return map[status] ?? '';
+  }
+
+  /**
+   * Inicia (ou reabre) um chat com um candidato e abre o widget de chat.
+   */
+  startChat(studentId: number, propertyId: number): void {
+    this.chatService.startChat(studentId, propertyId).subscribe({
+      next: (chat) => {
+        this.chatWidgetService.openChat(chat.id);
+      },
+      error: (err: any) => {
+        console.error('Erro ao iniciar chat', err);
+        this.toast.error('Não foi possível iniciar a conversa.');
+      }
+    });
   }
 }

@@ -11,6 +11,8 @@ import {FavoritosComponent} from './pages/favoritos/favoritos.component';
 import {PropertyDetailPageComponent} from './pages/property-detail/property-detail-page.component';
 import {RecommendationsComponent} from './pages/recommendations/recommendations.component';
 import {HabitsComponent} from './pages/habits/habits.component';
+import {ChatListComponent} from './pages/chat/chat-list/chat-list.component';
+import {ChatDetailComponent} from './pages/chat/chat-detail/chat-detail.component';
 
 export const routes: Routes = [
   {
@@ -92,6 +94,18 @@ export const routes: Routes = [
     component: PropertyDetailPageComponent,
     canActivate: [authGuard],
     title: 'Detalhes do Imóvel - Roomie'
+  },
+  {
+    path: 'chats',
+    component: ChatListComponent,
+    canActivate: [authGuard],
+    title: 'Conversas - Roomie'
+  },
+  {
+    path: 'chats/:id',
+    component: ChatDetailComponent,
+    canActivate: [authGuard],
+    title: 'Chat - Roomie'
   },
   {
     path: '**',

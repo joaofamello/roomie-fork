@@ -635,7 +635,8 @@
 }
 
 .btn-accept,
-.btn-reject {
+.btn-reject,
+.btn-chat {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -649,7 +650,8 @@
 }
 
 .btn-accept:hover,
-.btn-reject:hover {
+.btn-reject:hover,
+.btn-chat:hover {
   opacity: 0.82;
   transform: scale(1.1);
 }
@@ -664,8 +666,14 @@
   color: #721c24;
 }
 
+.btn-chat {
+  background: #dbeafe;
+  color: #1565c0;
+}
+
 .btn-accept .material-icons,
-.btn-reject .material-icons {
+.btn-reject .material-icons,
+.btn-chat .material-icons {
   font-size: 18px;
 }
 

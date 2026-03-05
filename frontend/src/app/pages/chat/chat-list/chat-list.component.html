@@ -1,0 +1,59 @@
+<app-header></app-header>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <span class="material-icons page-icon">chat</span>
+    <div>
+      <h2>Minhas Conversas</h2>
+      <p class="subtitle">Gerencie seus chats com interessados.</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <span class="material-icons spinning">sync</span>
+    <p>Carregando conversas...</p>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!isLoading && chats.length === 0">
+    <span class="material-icons empty-icon">chat_bubble_outline</span>
+    <h3>Nenhuma conversa ainda</h3>
+    <p>Os chats iniciados com estudantes aparecerão aqui.</p>
+  </div>
+
+  <!-- Chat list -->
+  <div class="chat-list" *ngIf="!isLoading && chats.length > 0">
+    <div
+      class="chat-item"
+      *ngFor="let chat of chats"
+      (click)="openChat(chat.id)"
+      (keydown.enter)="openChat(chat.id)"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'Abrir conversa com ' + otherPartyName(chat)">
+
+      <div class="chat-avatar">
+        <span class="material-icons">person</span>
+      </div>
+
+      <div class="chat-info">
+        <div class="chat-header-row">
+          <span class="chat-name">{{ otherPartyName(chat) }}</span>
+          <span class="chat-date">{{ chat.timestamp | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <span class="chat-property">
+          <span class="material-icons tiny-icon">home</span>
+          {{ chat.propertyTitle }}
+        </span>
+      </div>
+
+      <div class="chat-badge" *ngIf="chat.unreadCount > 0">
+        {{ chat.unreadCount }}
+      </div>
+
+      <span class="material-icons chevron-icon">chevron_right</span>
+    </div>
+  </div>
+</div>
+

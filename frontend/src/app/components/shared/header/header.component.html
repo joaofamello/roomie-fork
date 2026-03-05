@@ -75,6 +75,13 @@
             </button>
           </li>
 
+          <li>
+            <button (click)="goToChats()" class="dropdown-menu-item" role="menuitem">
+              <span aria-hidden="true" class="material-icons">chat</span>
+              Conversas
+            </button>
+          </li>
+
           <!-- Visível apenas para não-administradores -->
           <li *ngIf="user.role !== 'ADMIN'">
             <button (click)="goToStudentProfile()" class="dropdown-menu-item" role="menuitem">
