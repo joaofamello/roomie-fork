@@ -8,6 +8,7 @@ import { PropertyDetailView } from '../../models/property-detail-view';
 import { OwnerReportView } from '../../models/owner-report-view';
 import { HeaderComponent } from '../../components/shared/header/header.component';
 import { take } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-meus-imoveis',
@@ -28,7 +29,8 @@ export class MeusImoveis implements OnInit {
     private readonly userService: UserService,
     private readonly auth: Auth,
     private readonly cdr: ChangeDetectorRef,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly toast: ToastService
   ) {
   }
 
@@ -46,6 +48,7 @@ export class MeusImoveis implements OnInit {
       },
       error: (err: any) => {
         console.error('Erro ao buscar imóveis', err);
+        this.toast.error('Erro ao carregar seus imóveis.');
         this.isLoading = false;
         this.cdr.detectChanges();
       }
@@ -100,12 +103,14 @@ export class MeusImoveis implements OnInit {
   publish(id: number) {
     this.propertyService.publishProperty(id).subscribe({
       next: () => {
+        this.toast.success('Imóvel publicado com sucesso!');
         this.loadProperties();
         this.loadOwnerReport();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Erro ao publicar', err);
+        this.toast.error('Erro ao publicar o imóvel.');
         this.cdr.detectChanges();
       }
     });
@@ -138,12 +143,14 @@ export class MeusImoveis implements OnInit {
     this.deleteConfirmId = null;
     this.propertyService.deleteProperty(id).subscribe({
       next: () => {
+        this.toast.success('Imóvel excluído com sucesso!');
         this.loadProperties();
         this.loadOwnerReport();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Erro ao excluir imóvel', err);
+        this.toast.error('Erro ao excluir o imóvel.');
         this.cdr.detectChanges();
       }
     });

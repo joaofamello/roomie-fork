@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { Auth } from '../auth';
 import { firstValueFrom } from 'rxjs';
 import { RegisterData } from '../user.interface';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -44,6 +45,7 @@ export class Login {
   );
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
@@ -81,7 +83,7 @@ export class Login {
         await this.router.navigate(['/home']);
       } catch (error) {
         console.error(error);
-        alert('Falha no login! Verifique suas credenciais.');
+        this.toast.error('Falha no login! Verifique suas credenciais.');
       }
     } else {
       this.loginForm.markAllAsTouched();
@@ -104,13 +106,13 @@ export class Login {
 
         await firstValueFrom(this.auth.register(payload));
 
-        alert('Cadastro realizado com sucesso! Faça login.');
+        this.toast.success('Cadastro realizado com sucesso! Faça login.');
         this.togglePanel();
         this.registerForm.reset();
       } catch (error: any) {
         console.error(error);
         const msg = error?.error?.message || 'Erro ao realizar cadastro.';
-        alert(msg);
+        this.toast.error(msg);
       }
     } else {
       this.registerForm.markAllAsTouched();

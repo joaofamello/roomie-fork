@@ -6,6 +6,7 @@ import { UpdateUserDto } from '../../models/user/update-user.dto';
 import { HeaderComponent } from '../shared/header/header.component';
 import { Auth } from '../../auth/auth';
 import { take } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-profile-edit',
@@ -24,6 +25,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly auth = inject(Auth);
+  private readonly toast = inject(ToastService);
   private slowTimer: number = 0;
 
   ngOnInit(): void {
@@ -57,10 +59,12 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     const { newPassword, currentPassword } = this.profileForm.value;
     if (newPassword && !currentPassword) {
       this.errorMessage = 'Informe sua senha atual para definir uma nova senha.';
+      this.toast.warning('Informe sua senha atual para definir uma nova senha.');
       return;
     }
     if (currentPassword && !newPassword) {
       this.errorMessage = 'Informe a nova senha ou deixe ambos os campos em branco.';
+      this.toast.warning('Informe a nova senha ou deixe ambos os campos em branco.');
       return;
     }
 
@@ -88,6 +92,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.slowRequest = false;
         this.successMessage = 'Perfil atualizado com sucesso!';
+        this.toast.success('Perfil atualizado com sucesso!');
 
         // Atualiza o estado em memória imediatamente — sem precisar de novo login
         this.auth.updateCurrentUser({
@@ -106,12 +111,16 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
         const backendMsg = err?.error?.message ?? err?.error;
         if (typeof backendMsg === 'string' && backendMsg.length > 0) {
           this.errorMessage = backendMsg;
+          this.toast.error(backendMsg);
         } else if (err?.status === 400) {
           this.errorMessage = 'Dados inválidos. Verifique as informações e tente novamente.';
+          this.toast.error(this.errorMessage);
         } else if (err?.status === 0) {
           this.errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+          this.toast.error(this.errorMessage);
         } else {
           this.errorMessage = 'Erro ao atualizar perfil. Tente novamente.';
+          this.toast.error(this.errorMessage);
         }
       },
     });
