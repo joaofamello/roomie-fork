@@ -133,6 +133,10 @@ export class StudentProfileComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  goToHabits(): void {
+    this.router.navigate(['/habits']);
+  }
+
   addPhone(): void {
     const num = this.newPhoneControl.value?.trim();
     if (!num || this.newPhoneControl.invalid) return;

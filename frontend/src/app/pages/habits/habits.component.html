@@ -1,0 +1,135 @@
+<app-header [showCreateProperty]="false"></app-header>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div class="page-header">
+      <span class="material-icons page-icon">psychology</span>
+      <div>
+        <h2>Meus Hábitos</h2>
+        <p class="subtitle">Selecione seus hábitos e preferências para encontrar colegas de quarto compatíveis.</p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Carregando seus hábitos…</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+
+      <!-- 1. Horário de Estudo -->
+      <section class="category-section">
+        <h3 class="category-title">
+          <span class="material-icons">schedule</span>
+          Horário de Estudo
+        </h3>
+        <p class="category-hint">Escolha o período em que você costuma estudar.</p>
+        <div class="options-grid single-select">
+          <button
+            *ngFor="let option of scheduleOptions"
+            class="option-chip"
+            [class.selected]="selectedSchedule === option.value"
+            (click)="toggleSchedule(option.value)"
+          >
+            <span class="material-icons chip-icon">{{ option.icon }}</span>
+            {{ option.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. Hobbies -->
+      <section class="category-section">
+        <h3 class="category-title">
+          <span class="material-icons">sports_esports</span>
+          Hobbies
+        </h3>
+        <p class="category-hint">Selecione quantos quiser.</p>
+        <div class="options-grid">
+          <button
+            *ngFor="let option of hobbyOptions"
+            class="option-chip"
+            [class.selected]="isSelected(selectedHobbies, option.value)"
+            (click)="toggleSelection(selectedHobbies, option.value)"
+          >
+            <span class="material-icons chip-icon">{{ option.icon }}</span>
+            {{ option.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. Estilo de Vida -->
+      <section class="category-section">
+        <h3 class="category-title">
+          <span class="material-icons">self_improvement</span>
+          Estilo de Vida
+        </h3>
+        <p class="category-hint">Como você se define no dia a dia?</p>
+        <div class="options-grid">
+          <button
+            *ngFor="let option of lifeStyleOptions"
+            class="option-chip"
+            [class.selected]="isSelected(selectedLifeStyles, option.value)"
+            (click)="toggleSelection(selectedLifeStyles, option.value)"
+          >
+            <span class="material-icons chip-icon">{{ option.icon }}</span>
+            {{ option.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. Preferências de Limpeza -->
+      <section class="category-section">
+        <h3 class="category-title">
+          <span class="material-icons">cleaning_services</span>
+          Preferências de Limpeza
+        </h3>
+        <p class="category-hint">Como você lida com organização e limpeza?</p>
+        <div class="options-grid">
+          <button
+            *ngFor="let option of cleaningPrefsOptions"
+            class="option-chip"
+            [class.selected]="isSelected(selectedCleaningPrefs, option.value)"
+            (click)="toggleSelection(selectedCleaningPrefs, option.value)"
+          >
+            <span class="material-icons chip-icon">{{ option.icon }}</span>
+            {{ option.label }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Rodapé com ações -->
+      <div class="form-footer">
+        <div class="selection-summary" *ngIf="hasAnySelection">
+          <span class="material-icons">checklist</span>
+          {{ totalSelections }} item(ns) selecionado(s)
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-back" (click)="goBack()">Voltar</button>
+          <button
+            class="btn-save"
+            [disabled]="isSaving"
+            (click)="onSave()"
+          >
+            <span *ngIf="!isSaving" class="material-icons">save</span>
+            {{ isSaving ? 'Salvando...' : (hasExistingHabits ? 'Atualizar hábitos' : 'Salvar hábitos') }}
+          </button>
+        </div>
+
+        <!-- Link para recomendações -->
+        <button
+          *ngIf="hasExistingHabits"
+          class="btn-recommendations"
+          (click)="goToRecommendations()"
+        >
+          <span class="material-icons">people</span>
+          Ver recomendações de colegas
+        </button>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>

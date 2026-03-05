@@ -55,6 +55,13 @@
           </li>
 
           <li>
+            <button (click)="goToRecommendations()" class="dropdown-menu-item" role="menuitem">
+              <span aria-hidden="true" class="material-icons">people</span>
+              Recomendações
+            </button>
+          </li>
+
+          <li>
             <button (click)="goToCreateProperty()" class="dropdown-menu-item" role="menuitem">
               <span aria-hidden="true" class="material-icons">add_circle_outline</span>
               Cadastrar Imóvel
@@ -73,6 +80,13 @@
             <button (click)="goToStudentProfile()" class="dropdown-menu-item" role="menuitem">
               <span aria-hidden="true" class="material-icons">school</span>
               Minha Instituição
+            </button>
+          </li>
+
+          <li *ngIf="user.role !== 'ADMIN'">
+            <button (click)="goToHabits()" class="dropdown-menu-item" role="menuitem">
+              <span aria-hidden="true" class="material-icons">psychology</span>
+              Meus Hábitos
             </button>
           </li>
 

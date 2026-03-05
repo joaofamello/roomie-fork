@@ -283,6 +283,59 @@
   justify-content: flex-end;
 }
 
+/* === Habits Section === */
+.habits-section {
+  margin-top: 36px;
+  border-top: 1px solid #eee;
+  padding-top: 28px;
+}
+
+.habits-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.habits-title .material-icons {
+  color: #0d83d7;
+  font-size: 20px;
+}
+
+.habits-description {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.btn-habits {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #0d83d7 0%, #005fa3 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-habits:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-habits .material-icons {
+  font-size: 18px;
+}
+
 /* === MOBILE RESPONSIVE === */
 @media (max-width: 576px) {
   .page-wrapper {

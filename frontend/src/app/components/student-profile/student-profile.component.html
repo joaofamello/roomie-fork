@@ -117,6 +117,21 @@
       </ng-container>
     </div>
 
+    <!-- Seção de hábitos -->
+    <div class="habits-section" *ngIf="hasProfile">
+      <h3 class="habits-title">
+        <span class="material-icons">psychology</span>
+        Hábitos e Preferências
+      </h3>
+      <p class="habits-description">
+        Configure seus hábitos para receber recomendações de colegas compatíveis.
+      </p>
+      <button class="btn-habits" (click)="goToHabits()">
+        <span class="material-icons">arrow_forward</span>
+        Gerenciar meus hábitos
+      </button>
+    </div>
+
   </div>
 </div>
 
