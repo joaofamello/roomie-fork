@@ -1,15 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { Auth } from '../auth/auth';
-import { PropertyType } from '../models/property-type.enum';
-import { PropertyService } from '../services/propertyService';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
+import {PropertyType} from '../models/property-type.enum';
+import {PropertyService} from '../services/propertyService';
+import {HeaderComponent} from '../components/shared/header/header.component';
+import {environment} from '../../enviroments/enviroment';
 
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
   templateUrl: './property-form.html',
   styleUrls: ['./property-form.css']
 })
@@ -18,14 +19,22 @@ export class PropertyFormComponent implements OnInit {
   propertyTypes = Object.values(PropertyType);
   showImageUpload: boolean = false;
   isSubmitting: boolean = false;
+  submitSuccess: boolean = false;
+  submitError: string = '';
+  editMode: boolean = false;
+  editPropertyId: number | null = null;
 
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
+  existingPhotos: { id: number; url: string }[] = [];
 
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private auth = inject(Auth);
-  private propertyService = inject(PropertyService);
+  private readonly apiBase = environment.apiUrl;
+
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly propertyService = inject(PropertyService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.propertyForm = this.fb.group({
@@ -45,8 +54,66 @@ export class PropertyFormComponent implements OnInit {
       }),
 
       acceptAnimals: [false],
+      hasGarage: [false],
       gender: ['MIXED']
     });
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.editMode = true;
+      this.editPropertyId = +id;
+      this.loadPropertyData(this.editPropertyId);
+    }
+  }
+
+  loadPropertyData(id: number): void {
+    this.propertyService.getDetailById(id).subscribe({
+      next: (property) => {
+        this.propertyForm.patchValue({
+          title: property.titulo,
+          description: property.descricao,
+          price: property.preco,
+          availableVacancies: property.vagasDisponiveis,
+          type: property.tipo,
+          acceptAnimals: property.aceitaAnimais,
+          hasGarage: property.temGaragem,
+          gender: property.generoMoradores,
+          address: {
+            street: property.rua,
+            number: property.numEndereco?.toString(),
+            district: property.bairro,
+            city: property.cidade,
+            state: property.estado,
+            cep: property.cep
+          }
+        });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar imóvel:', err);
+      }
+    });
+
+    this.propertyService.getById(id).subscribe({
+      next: (property) => {
+        if (property.photos && property.photos.length > 0) {
+          this.existingPhotos = property.photos.map((p: any) => ({
+            id: p.id,
+            url: p.path.startsWith('http') ? p.path : this.apiBase + p.path
+          }));
+          this.showImageUpload = true;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar fotos:', err);
+      }
+    });
+  }
+
+  removeExistingPhoto(index: number): void {
+    this.existingPhotos.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   toggleImageUpload(): void {
@@ -56,13 +123,13 @@ export class PropertyFormComponent implements OnInit {
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      for (const file of files) {
         this.selectedFiles.push(file);
 
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.imagePreviews.push(e.target.result);
+          this.cdr.detectChanges();
         };
         reader.readAsDataURL(file);
       }
@@ -72,6 +139,7 @@ export class PropertyFormComponent implements OnInit {
   removeImage(index: number): void {
     this.selectedFiles.splice(index, 1);
     this.imagePreviews.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   onSubmit(): void {
@@ -83,48 +151,61 @@ export class PropertyFormComponent implements OnInit {
         type: 'application/json'
       }));
 
-      for (let i = 0; i < this.selectedFiles.length; i++) {
-        formData.append('photos', this.selectedFiles[i]);
+      for (const file of this.selectedFiles) {
+        formData.append('photos', file);
       }
 
-      this.propertyService.createProperty(formData).subscribe({
-        next: (response) => {
-          alert('Imóvel cadastrado com sucesso!');
-          this.isSubmitting = false;
-          this.router.navigate(['/home']);
-        },
-        error: (err) => {
-          console.error('Erro ao salvar imóvel:', err);
-          alert('Erro ao cadastrar o imóvel. Tente novamente mais tarde.');
-          this.isSubmitting = false;
-        }
-      });
+      if (this.editMode && this.editPropertyId) {
+        this.propertyService.updateProperty(this.editPropertyId, formData).subscribe({
+          next: () => {
+            this.submitSuccess = true;
+            this.submitError = '';
+            this.isSubmitting = false;
+            setTimeout(() => this.router.navigate(['/meus-imoveis']), 1500);
+          },
+          error: (err) => {
+            console.error('Erro ao atualizar imóvel:', err);
+            this.submitError = 'Erro ao atualizar o imóvel. Tente novamente mais tarde.';
+            this.submitSuccess = false;
+            this.isSubmitting = false;
+          }
+        });
+      } else {
+        this.propertyService.createProperty(formData).subscribe({
+          next: () => {
+            this.submitSuccess = true;
+            this.submitError = '';
+            this.isSubmitting = false;
+            setTimeout(() => this.router.navigate(['/meus-imoveis']), 1500);
+          },
+          error: (err) => {
+            console.error('Erro ao salvar imóvel:', err);
+            this.submitError = 'Erro ao cadastrar o imóvel. Tente novamente mais tarde.';
+            this.submitSuccess = false;
+            this.isSubmitting = false;
+          }
+        });
+      }
     } else {
       this.propertyForm.markAllAsTouched();
     }
   }
 
-  goBackHome() {
-    this.router.navigate(['/home']);
-  }
-
-  goToProfile() {
-    alert('Aqui abrirá o Perfil!');
-  }
-
-  onLogout(): void {
-    this.auth.logout();
-    this.router.navigate(['/login']);
-  }
 
   getLabelForType(type: string): string {
     switch (type) {
-      case PropertyType.HOUSE: return 'Casa';
-      case PropertyType.APARTMENT: return 'Apartamento';
-      case PropertyType.STUDIO: return 'Studio';
-      case PropertyType.ROOM: return 'Quarto';
-      case PropertyType.DORMITORY: return 'República';
-      default: return type;
+      case PropertyType.HOUSE:
+        return 'Casa';
+      case PropertyType.APARTMENT:
+        return 'Apartamento';
+      case PropertyType.STUDIO:
+        return 'Studio';
+      case PropertyType.ROOM:
+        return 'Quarto';
+      case PropertyType.DORMITORY:
+        return 'República';
+      default:
+        return type;
     }
   }
 }

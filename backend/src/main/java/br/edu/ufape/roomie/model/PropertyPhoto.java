@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Imagem_Imovel")
+@Table(name = "imagem_imovel")
 @Data
 @NoArgsConstructor
 public class PropertyPhoto {

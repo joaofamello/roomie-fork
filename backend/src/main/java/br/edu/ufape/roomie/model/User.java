@@ -1,20 +1,24 @@
 package br.edu.ufape.roomie.model;
 
+import br.edu.ufape.roomie.enums.UserGender;
+import br.edu.ufape.roomie.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import br.edu.ufape.roomie.enums.UserGender;
-import br.edu.ufape.roomie.enums.UserRole;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
 public class User implements UserDetails {
@@ -39,11 +43,13 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "genero", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "genero", nullable = false, columnDefinition = "tipo_genero")
     private UserGender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "cargo", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "cargo", nullable = false, columnDefinition = "user_role")
     private UserRole role;
 
     @JsonIgnore
@@ -59,7 +65,7 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public void addTelefone(String numero){
+    public void addTelefone(String numero) {
         Telefone novoTelefone = new Telefone(numero, this);
         this.telefones.add(novoTelefone);
     }

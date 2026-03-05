@@ -1,0 +1,122 @@
+<app-header [showCreateProperty]="false"></app-header>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div class="page-header">
+      <span class="material-icons page-icon">school</span>
+      <div>
+        <h2>Minha Instituição</h2>
+        <p class="subtitle">Informe sua faculdade e curso para encontrar moradia ainda mais próxima de você.</p>
+      </div>
+    </div>
+
+    <div *ngIf="successMessage" class="alert success">
+      <span class="material-icons">check_circle</span>
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert error">
+      <span class="material-icons">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="studentForm">
+
+      <div class="form-group">
+        <label for="institution">Instituição de Ensino</label>
+        <input
+          formControlName="institution"
+          id="institution"
+          placeholder="Ex: Universidade Federal do Agreste de Pernambuco"
+          type="text"
+        />
+        <div *ngIf="studentForm.get('institution')?.invalid && studentForm.get('institution')?.touched"
+             class="field-error">
+          Informe o nome da sua instituição (mín. 3 caracteres).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="major">Curso</label>
+        <input
+          formControlName="major"
+          id="major"
+          placeholder="Ex: Ciência da Computação"
+          type="text"
+        />
+        <div *ngIf="studentForm.get('major')?.invalid && studentForm.get('major')?.touched" class="field-error">
+          Informe o nome do seu curso (mín. 3 caracteres).
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button (click)="goBack()" class="btn-back" type="button">Voltar</button>
+        <button [disabled]="isLoading" class="btn-save" type="submit">
+          <span *ngIf="!isLoading" class="material-icons">save</span>
+          {{ isLoading ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Seção de telefones de contato -->
+    <div class="phones-section">
+      <h3 class="phones-title">
+        <span class="material-icons">phone</span>
+        Telefones de contato
+      </h3>
+
+      <!-- Aviso quando perfil ainda não foi preenchido -->
+      <div class="alert info" *ngIf="!hasProfile">
+        <span class="material-icons">info</span>
+        Preencha e salve sua instituição e curso acima para cadastrar seus telefones de contato.
+      </div>
+
+      <ng-container *ngIf="hasProfile">
+
+      <div class="alert success" *ngIf="phonesSuccess">
+        <span class="material-icons">check_circle</span>
+        {{ phonesSuccess }}
+      </div>
+      <div *ngIf="phonesError" class="alert error">
+        <span class="material-icons">error</span>
+        {{ phonesError }}
+      </div>
+
+      <ul *ngIf="phones.length > 0" class="phones-list">
+        <li *ngFor="let phone of phones; let i = index" class="phone-item">
+          <span class="material-icons">phone_iphone</span>
+          {{ phone }}
+          <button (click)="removePhone(i)" class="btn-remove-phone" title="Remover">
+            <span class="material-icons">close</span>
+          </button>
+        </li>
+      </ul>
+      <p *ngIf="phones.length === 0" class="no-phones">Nenhum telefone cadastrado.</p>
+
+      <div class="add-phone-row">
+        <input
+          (keyup.enter)="addPhone()"
+          [formControl]="newPhoneControl"
+          placeholder="Ex: (81) 99999-0000"
+          type="tel"
+        />
+        <button (click)="addPhone()" [disabled]="newPhoneControl.invalid || !newPhoneControl.value"
+                class="btn-add-phone">
+          <span class="material-icons">add</span>
+          Adicionar
+        </button>
+      </div>
+
+      <div class="phones-actions">
+        <button (click)="savePhones()" [disabled]="isSavingPhones" class="btn-save">
+          {{ isSavingPhones ? 'Salvando...' : 'Salvar telefones' }}
+        </button>
+      </div>
+
+      </ng-container>
+    </div>
+
+  </div>
+</div>
+

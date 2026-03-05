@@ -1,0 +1,238 @@
+/* === TOPBAR === */
+.topbar-blue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0d83d7;
+  padding: 15px 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  position: relative;
+}
+
+.logo-text {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  color: white;
+  margin: 0;
+  font-weight: 800;
+  font-size: 26px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* === HEADER BUTTONS AREA === */
+.header-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.outline-btn {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 8px 22px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.outline-btn:hover {
+  background: white;
+  color: #005fa3;
+}
+
+/* === USER BUTTON (avatar + seta) === */
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-button {
+  background: white;
+  border: none;
+  padding: 5px 14px 5px 6px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  height: 42px;
+  transition: background 0.2s;
+  font-family: 'Raleway', sans-serif;
+}
+
+.user-button:hover {
+  background: #f0f0f0;
+}
+
+.user-initials {
+  background: #005fa3;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.arrow-down {
+  color: #555;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* === DROPDOWN === */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 270px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #eee;
+  padding: 6px 0;
+  z-index: 9999;
+  animation: dropdownIn 0.15s ease;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cabeçalho do dropdown */
+.dropdown-user-info {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-avatar {
+  background: #005fa3;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.dropdown-user-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dropdown-user-text strong {
+  color: #222;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-user-text span {
+  color: #888;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* Separador */
+.user-dropdown hr {
+  border: 0;
+  border-top: 1px solid #f0f0f0;
+  margin: 5px 0;
+}
+
+/* Lista de itens */
+.user-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-dropdown .dropdown-menu-item {
+  /* Reset de button */
+  border: none;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  /* Estilo visual */
+  padding: 11px 18px;
+  font-size: 14px;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+  font-family: 'Raleway', sans-serif;
+}
+
+.user-dropdown .dropdown-menu-item:hover,
+.user-dropdown .dropdown-menu-item:focus {
+  background: #f0f7ff;
+  color: #005fa3;
+  outline: none;
+}
+
+.user-dropdown .dropdown-menu-item:focus-visible {
+  outline: 2px solid #005fa3;
+  outline-offset: -2px;
+}
+
+.user-dropdown .dropdown-menu-item:hover .material-icons,
+.user-dropdown .dropdown-menu-item:focus .material-icons {
+  color: #005fa3;
+}
+
+.user-dropdown .dropdown-menu-item .material-icons {
+  font-size: 20px;
+  color: #005fa3;
+  flex-shrink: 0;
+}
+
+/* Item de Sair */
+.logout-item {
+  color: #c62828 !important;
+  font-weight: 600;
+}
+
+.logout-item .material-icons {
+  color: #c62828 !important;
+}
+
+.logout-item:hover {
+  background: #fff5f5 !important;
+  color: #c62828 !important;
+}
+
+.logout-item:hover .material-icons {
+  color: #c62828 !important;
+}

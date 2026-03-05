@@ -1,0 +1,135 @@
+<app-header></app-header>
+<div class="page-wrapper">
+
+  <!-- Cabeçalho da página -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="material-icons page-icon">home_work</span>
+      <div>
+        <h2>Meus Imóveis</h2>
+        <p class="subtitle">Gerencie seus anúncios e acompanhe seu desempenho.</p>
+      </div>
+    </div>
+    <a class="btn-new" routerLink="/properties/new">
+      <span class="material-icons">add</span>
+      Novo imóvel
+    </a>
+  </div>
+
+  <!-- Painel de estatísticas -->
+  <div class="stats-panel" *ngIf="ownerReport">
+    <div class="stat-card">
+      <span class="material-icons stat-icon">apartment</span>
+      <span class="stat-value">{{ ownerReport.totalImoveis }}</span>
+      <span class="stat-label">Imóveis</span>
+    </div>
+    <div class="stat-card">
+      <span class="material-icons stat-icon">group</span>
+      <span class="stat-value">{{ ownerReport.totalVagasOferecidas }}</span>
+      <span class="stat-label">Vagas totais</span>
+    </div>
+    <div class="stat-card highlight">
+      <span class="material-icons stat-icon">trending_up</span>
+      <span class="stat-value">R$ {{ ownerReport.mediaPrecoImoveis | number:'1.0-0' }}</span>
+      <span class="stat-label">Preço médio</span>
+    </div>
+    <div class="stat-card">
+      <span class="material-icons stat-icon">arrow_downward</span>
+      <span class="stat-value">R$ {{ ownerReport.menorPreco | number:'1.0-0' }}</span>
+      <span class="stat-label">Menor preço</span>
+    </div>
+    <div class="stat-card">
+      <span class="material-icons stat-icon">arrow_upward</span>
+      <span class="stat-value">R$ {{ ownerReport.maiorPreco | number:'1.0-0' }}</span>
+      <span class="stat-label">Maior preço</span>
+    </div>
+  </div>
+
+  <!-- Estado vazio -->
+  <div class="empty-state" *ngIf="!isLoading && properties.length === 0">
+    <span class="material-icons empty-icon">home</span>
+    <h3>Nenhum imóvel cadastrado</h3>
+    <p>Comece publicando seu primeiro anúncio.</p>
+    <a class="btn-new" routerLink="/properties/new">
+      <span class="material-icons">add</span>
+      Cadastrar imóvel
+    </a>
+  </div>
+
+  <!-- Lista de imóveis -->
+  <div class="properties-grid" *ngIf="properties.length > 0">
+    <div class="property-card" *ngFor="let property of properties">
+
+      <div class="property-card-header">
+        <h3 class="property-title">{{ property.titulo }}</h3>
+        <span class="status-badge" [ngClass]="statusClass(property.status)">
+          {{ statusLabel(property.status) }}
+        </span>
+      </div>
+
+      <div class="property-info">
+        <div class="info-row">
+          <span class="material-icons info-icon">attach_money</span>
+          <span>R$ {{ property.preco | number:'1.0-0' }}<span class="info-sub">/mês</span></span>
+        </div>
+        <div class="info-row" *ngIf="property.vagasDisponiveis !== undefined">
+          <span class="material-icons info-icon">group</span>
+          <span>{{ property.vagasDisponiveis }} vaga{{ property.vagasDisponiveis !== 1 ? 's' : '' }}</span>
+        </div>
+        <div class="info-row" *ngIf="property.tipo">
+          <span class="material-icons info-icon">category</span>
+          <span>{{ typeLabel(property.tipo) }}</span>
+        </div>
+      </div>
+
+      <div class="property-card-actions">
+        <button
+          *ngIf="property.status === 'DRAFT'"
+          class="btn-publish"
+          (click)="publish(property.idImovel)">
+          <span class="material-icons">publish</span>
+          Publicar
+        </button>
+        <span class="published-badge" *ngIf="property.status === 'ACTIVE'">
+          <span class="material-icons">check_circle</span>
+          Publicado
+        </span>
+        <span class="rented-badge" *ngIf="property.status === 'RENTED'">
+          <span class="material-icons">lock</span>
+          Alugado
+        </span>
+        <button
+          *ngIf="property.status !== 'RENTED'"
+          class="btn-edit"
+          (click)="editProperty(property.idImovel)">
+          <span class="material-icons">edit</span>
+          Editar
+        </button>
+        <button
+          class="btn-delete"
+          (click)="askDelete(property.idImovel)">
+          <span class="material-icons">delete</span>
+          Excluir
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal-overlay" *ngIf="deleteConfirmId !== null" (click)="cancelDelete()" (keydown.escape)="cancelDelete()">
+  <dialog open class="modal-box" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" (keydown.escape)="cancelDelete()">
+    <span class="material-icons modal-icon">warning</span>
+    <h3>Excluir imóvel?</h3>
+    <p>Esta ação é permanente e não poderá ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn-modal-confirm" (click)="confirmDelete()">
+        <span class="material-icons">delete</span>
+        Excluir
+      </button>
+    </div>
+  </dialog>
+</div>
+

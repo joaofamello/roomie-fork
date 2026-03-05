@@ -1,19 +1,20 @@
-<div class="modal-overlay" (click)="closeOnOverlay($event)">
+<div (click)="closeOnOverlay($event)" (keydown.escape)="closed.emit()" class="modal-overlay">
   <div class="modal-panel">
-
-    <button class="close-btn" (click)="closed.emit()">✕</button>
+    <button (click)="closed.emit()" class="close-btn">✕</button>
 
     <!-- Galeria de fotos -->
-    <div class="gallery" *ngIf="photos.length > 0; else noPhotos">
-      <img class="main-photo" [src]="selectedPhotoUrl" alt="Foto do imóvel" />
-      <div class="thumbnails" *ngIf="photos.length > 1">
-        <img
+    <div *ngIf="photos.length > 0; else noPhotos" class="gallery">
+      <img [src]="selectedPhotoUrl" alt="Foto do imóvel" class="main-photo" />
+      <div *ngIf="photos.length > 1" class="thumbnails">
+        <button
           *ngFor="let photo of photos; let i = index"
-          [src]="apiBase + photo.path"
-          [class.active]="i === selectedPhotoIndex"
           (click)="selectPhoto(i)"
-          alt="Miniatura {{ i + 1 }}"
-        />
+          class="thumbnail-btn"
+          [class.active]="i === selectedPhotoIndex"
+          [attr.aria-label]="'Miniatura ' + (i + 1)"
+        >
+          <img [src]="photoUrl(photo.path)" alt="Miniatura {{ i + 1 }}" />
+        </button>
       </div>
     </div>
     <ng-template #noPhotos>
@@ -24,10 +25,12 @@
     <div class="detail-body">
       <div class="detail-header">
         <h2>{{ property.title }}</h2>
-        <span class="price">R$ {{ property.price | number:'1.0-0' }}<span class="per-month">/mês</span></span>
+        <span class="price"
+          >R$ {{ property.price | number: '1.0-0' }}<span class="per-month">/mês</span></span
+        >
       </div>
 
-      <p class="description" *ngIf="property.description">{{ property.description }}</p>
+      <p *ngIf="property.description" class="description">{{ property.description }}</p>
 
       <div class="info-grid">
         <div class="info-item">
@@ -39,7 +42,7 @@
           <span class="value">{{ property.availableVacancies ?? '—' }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Perfil dos moradores</span>
+          <span class="label">Gênero dos moradores</span>
           <span class="value">{{ genderLabel(property.gender) }}</span>
         </div>
         <div class="info-item">
@@ -48,20 +51,24 @@
         </div>
       </div>
 
-      <div class="address-block" *ngIf="property.address">
+      <div *ngIf="property.address" class="address-block">
         <h3>Localização</h3>
         <p>
           {{ property.address.street }}, {{ property.address.number }} —
-          {{ property.address.district }}, {{ property.address.city }} / {{ property.address.state }}
+          {{ property.address.district }}, {{ property.address.city }} /
+          {{ property.address.state }}
         </p>
         <p class="cep">CEP: {{ property.address.cep }}</p>
       </div>
 
-      <div class="owner-block" *ngIf="property.owner">
+      <div *ngIf="property.owner || detail" class="owner-block">
         <h3>Anunciante</h3>
-        <p>{{ property.owner.name }}</p>
+        <p>{{ detail?.nomeProprietario ?? property.owner?.name }}</p>
+        <p *ngIf="detail?.emailProprietario" class="owner-email">
+          <span class="material-icons" style="font-size: 14px; vertical-align: middle">email</span>
+          {{ detail!.emailProprietario }}
+        </p>
       </div>
     </div>
-
   </div>
 </div>

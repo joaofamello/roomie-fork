@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "telefone")
 @Data
 @NoArgsConstructor
-public class Telefone{
+public class Telefone {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_telefone")
     private Long idTelefone;
 
-    @Column(name = "numero", nullable = false )
+    @Column(name = "numero", nullable = false)
     private String numero;
 
     @ManyToOne

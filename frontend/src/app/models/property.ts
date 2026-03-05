@@ -27,6 +27,7 @@ export interface Property {
   price: number;
   gender?: string;
   acceptAnimals?: boolean;
+  hasGarage?: boolean;
   availableVacancies?: number;
   status?: string;
   address?: PropertyAddress;

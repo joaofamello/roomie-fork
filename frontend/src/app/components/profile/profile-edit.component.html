@@ -1,0 +1,67 @@
+<app-header [showCreateProperty]="false"></app-header>
+
+<div class="container">
+  <h2>Editar Perfil</h2>
+  <p class="subtitle">Mantenha seus dados atualizados no Roomie.</p>
+
+  <div *ngIf="successMessage" class="alert success">
+    <span class="material-icons">check_circle</span> {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert error">
+    <span class="material-icons">error</span> {{ errorMessage }}
+  </div>
+
+  <!-- Aviso de servidor lento (ex: Render cold start) -->
+  <div *ngIf="slowRequest" class="alert slow">
+    <span class="material-icons">hourglass_top</span>
+    O servidor está acordando, aguarde mais alguns segundos...
+  </div>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="profileForm">
+    <div class="form-group">
+      <label for="edit-name">Nome Completo</label>
+      <input id="edit-name" formControlName="name" placeholder="Seu nome" type="text" />
+    </div>
+
+    <div class="form-group">
+      <label for="edit-email">E-mail</label>
+      <input
+        id="edit-email"
+        formControlName="email"
+        placeholder="seuemail@exemplo.com"
+        type="email"
+      />
+    </div>
+
+    <hr />
+    <h3>Alterar Senha</h3>
+    <p class="subtitle">Deixe em branco se não quiser alterar.</p>
+
+    <div class="form-row">
+      <div class="form-group half">
+        <label for="edit-currentPassword">Senha Atual</label>
+        <input
+          id="edit-currentPassword"
+          formControlName="currentPassword"
+          placeholder="********"
+          type="password"
+        />
+      </div>
+
+      <div class="form-group half">
+        <label for="edit-newPassword">Nova Senha</label>
+        <input
+          id="edit-newPassword"
+          formControlName="newPassword"
+          placeholder="********"
+          type="password"
+        />
+      </div>
+    </div>
+
+    <button [disabled]="isLoading" class="btn-save" type="submit">
+      <span *ngIf="isLoading" class="spinner"></span>
+      {{ isLoading ? 'Salvando...' : 'Salvar Alterações' }}
+    </button>
+  </form>
+</div>

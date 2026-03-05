@@ -14,17 +14,17 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(controllers = AuthController.class, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
@@ -49,7 +49,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("Deveria retornar 201 ao registrar um usuário válido")
-    void  testaRegistroComSucesso() throws Exception{
+    void testaRegistroComSucesso() throws Exception {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Nome teste");
         userDTO.setEmail("teste@gmail.com");
@@ -69,8 +69,8 @@ class AuthControllerTest {
 
         var response = mvc.perform(
                 post("/auth/register")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(userDTOJacksonTester.write(userDTO).getJson())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userDTOJacksonTester.write(userDTO).getJson())
         ).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
     }

@@ -6,16 +6,9 @@
   Nenhum resultado encontrado
 </div>
 
-<div class="grid" *ngIf="!loading && properties.length > 0">
+<div *ngIf="!loading && properties.length > 0" class="grid">
   <app-property-card
     *ngFor="let property of properties"
-    [property]="property"
-    (propertySelected)="openDetail($event)">
+    [property]="property">
   </app-property-card>
 </div>
-
-<app-property-detail
-  *ngIf="selectedProperty"
-  [property]="selectedProperty"
-  (closed)="closeDetail()">
-</app-property-detail>

@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
 
-import { PropertyList } from './property-list';
+import {PropertyList} from './property-list';
 
 describe('PropertyList', () => {
   let component: PropertyList;
@@ -8,9 +9,10 @@ describe('PropertyList', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PropertyList]
+      imports: [PropertyList],
+      providers: [provideRouter([])]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PropertyList);
     component = fixture.componentInstance;

@@ -1,125 +1,304 @@
-<div class="container" [class.right-panel-active]="isRightPanelActive">
-
+<div [class.right-panel-active]="isRightPanelActive" class="container">
   <div class="form-container sign-up-container">
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <form (ngSubmit)="onRegister()" [formGroup]="registerForm">
       <h1>Crie sua conta</h1>
 
       <div class="input-group">
         <label for="name">Nome:</label>
-        <input type="text" placeholder="ex: João da Silva" formControlName="name" />
-        <div class="error-message" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['required']">
+        <input formControlName="name" placeholder="ex: João da Silva" type="text" />
+        <div
+          *ngIf="
+            registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['required']
+          "
+          class="error-message"
+        >
           Nome é obrigatório.
         </div>
-        <div class="error-message" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['minlength']">
+        <div
+          *ngIf="
+            registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['minlength']
+          "
+          class="error-message"
+        >
           Mínimo de 3 caracteres.
         </div>
       </div>
 
-      <div class="input-group">
-        <label>Gênero:</label>
+      <fieldset class="input-group gender-fieldset">
+        <legend class="gender-legend">Gênero:</legend>
 
         <div class="gender-options">
-          <input type="radio" id="gender-male" value="MALE" formControlName="gender" name="gender">
-          <label for="gender-male" class="gender-btn">Masculino</label>
+          <input
+            formControlName="gender"
+            id="gender-male"
+            name="gender"
+            type="radio"
+            value="MALE"
+          />
+          <label class="gender-btn" for="gender-male">Masculino</label>
 
-          <input type="radio" id="gender-female" value="FEMALE" formControlName="gender" name="gender">
-          <label for="gender-female" class="gender-btn">Feminino</label>
+          <input
+            formControlName="gender"
+            id="gender-female"
+            name="gender"
+            type="radio"
+            value="FEMALE"
+          />
+          <label class="gender-btn" for="gender-female">Feminino</label>
 
-          <input type="radio" id="gender-other" value="OTHER" formControlName="gender" name="gender">
-          <label for="gender-other" class="gender-btn">Outro</label>
+          <input
+            formControlName="gender"
+            id="gender-other"
+            name="gender"
+            type="radio"
+            value="OTHER"
+          />
+          <label class="gender-btn" for="gender-other">Outro</label>
         </div>
 
-        <div class="error-message" *ngIf="registerForm.get('gender')?.touched && registerForm.get('gender')?.errors?.['required']">
+        <div
+          *ngIf="
+            registerForm.get('gender')?.touched && registerForm.get('gender')?.errors?.['required']
+          "
+          class="error-message"
+        >
           Selecione uma opção.
         </div>
-      </div>
+      </fieldset>
 
       <div class="input-group">
         <label for="cpf">CPF:</label>
-        <input type="text" placeholder="000.000.000-00" formControlName="cpf" maxlength="14"/>
+        <input formControlName="cpf" maxlength="14" placeholder="000.000.000-00" type="text" />
 
-        <div class="error-message" *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors?.['required']">
+        <div
+          *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors?.['required']"
+          class="error-message"
+        >
           CPF é obrigatório.
         </div>
 
-        <div class="error-message" *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors?.['pattern']">
-          CPF inválido. Use pontos ou apenas números.
+        <div
+          *ngIf="
+            registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors?.['cpfInvalid']
+          "
+          class="error-message"
+        >
+          CPF inválido. Informe um CPF real válido.
         </div>
       </div>
 
       <div class="input-group">
         <label for="email">E-mail:</label>
-        <input type="email" placeholder="ex: seu@email.com" formControlName="email" />
-        <div class="error-message" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']">
+        <input formControlName="email" placeholder="ex: seu@email.com" type="email" />
+        <div
+          *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']"
+          class="error-message"
+        >
           Email inválido.
         </div>
       </div>
 
       <div class="input-group">
         <label for="phone">Telefone:</label>
-        <input type="tel" placeholder="ex: (11) 99999-9999" formControlName="phone" />
-        <div class="error-message" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['required']">
+        <input formControlName="phone" placeholder="ex: (11) 99999-9999" type="tel" />
+        <div
+          *ngIf="
+            registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['required']
+          "
+          class="error-message"
+        >
           Telefone é obrigatório.
         </div>
-        <div class="error-message" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['pattern']">
-          Formato inválido. Use: (XX) 9XXXX-XXXX
+        <div
+          *ngIf="
+            registerForm.get('phone')?.touched && registerForm.get('phone')?.errors?.['pattern']
+          "
+          class="error-message"
+        >
+          Formato inválido. Ex: (81) 99999-9999
         </div>
       </div>
 
       <div class="input-group">
         <label for="password">Senha:</label>
-        <input [type]="showRegisterPass ? 'text' : 'password'" placeholder="********" formControlName="password" />
-        <button type="button" class="eye-btn" (click)="toggleRegisterPass()">
-          <svg *ngIf="!showRegisterPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          <svg *ngIf="showRegisterPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B0082" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-        </button>
-        <div class="error-message" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
+        <div class="password-wrapper">
+          <input
+            [type]="showRegisterPass ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="********"
+          />
+          <button (click)="toggleRegisterPass()" class="eye-btn" type="button">
+            <svg
+              *ngIf="!showRegisterPass"
+              fill="none"
+              height="20"
+              stroke="#666"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg
+              *ngIf="showRegisterPass"
+              fill="none"
+              height="20"
+              stroke="#4B0082"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"
+              ></path>
+              <line x1="1" x2="23" y1="1" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('password')?.touched &&
+            registerForm.get('password')?.errors?.['minlength']
+          "
+          class="error-message"
+        >
           Mínimo de 6 caracteres.
         </div>
       </div>
 
       <div class="input-group">
         <label for="confirmPassword">Confirmar Senha:</label>
-        <input [type]="showConfirmPass ? 'text' : 'password'" placeholder="********" formControlName="confirmPassword" />
-        <button type="button" class="eye-btn" (click)="toggleConfirmPass()">
-           <svg *ngIf="!showConfirmPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-           <svg *ngIf="showConfirmPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B0082" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-        </button>
-        <div class="error-message" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.errors?.['passwordMismatch']">
+        <div class="password-wrapper">
+          <input
+            [type]="showConfirmPass ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            placeholder="********"
+          />
+          <button (click)="toggleConfirmPass()" class="eye-btn" type="button">
+            <svg
+              *ngIf="!showConfirmPass"
+              fill="none"
+              height="20"
+              stroke="#666"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg
+              *ngIf="showConfirmPass"
+              fill="none"
+              height="20"
+              stroke="#4B0082"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"
+              ></path>
+              <line x1="1" x2="23" y1="1" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('confirmPassword')?.touched &&
+            registerForm.errors?.['passwordMismatch']
+          "
+          class="error-message"
+        >
           As senhas não conferem.
         </div>
       </div>
 
-      <button type="submit" [disabled]="registerForm.invalid">Cadastrar</button>
+      <button [disabled]="registerForm.invalid" type="submit">Cadastrar</button>
     </form>
   </div>
 
   <div class="form-container sign-in-container">
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <form (ngSubmit)="onLogin()" [formGroup]="loginForm">
       <h1>Login</h1>
 
       <div class="input-group">
         <label for="email">E-mail:</label>
-        <input type="email" placeholder="ex: seu@email.com" formControlName="email" />
-        <div class="error-message" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+        <input formControlName="email" placeholder="ex: seu@email.com" type="email" />
+        <div
+          *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+          class="error-message"
+        >
           Digite um email válido.
         </div>
       </div>
 
       <div class="input-group">
         <label for="password">Senha:</label>
-        <input [type]="showLoginPass ? 'text' : 'password'" placeholder="********" formControlName="password" />
-        <button type="button" class="eye-btn" (click)="toggleLoginPass()">
-           <svg *ngIf="!showLoginPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-           <svg *ngIf="showLoginPass" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B0082" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-        </button>
-        <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+        <div class="password-wrapper">
+          <input
+            [type]="showLoginPass ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="********"
+          />
+          <button (click)="toggleLoginPass()" class="eye-btn" type="button">
+            <svg
+              *ngIf="!showLoginPass"
+              fill="none"
+              height="20"
+              stroke="#666"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg
+              *ngIf="showLoginPass"
+              fill="none"
+              height="20"
+              stroke="#4B0082"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"
+              ></path>
+              <line x1="1" x2="23" y1="1" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+          class="error-message"
+        >
           Senha muito curta.
         </div>
       </div>
 
       <a href="#">Esqueceu sua senha?</a>
-      <button type="submit" [disabled]="loginForm.invalid">Entrar</button>
+      <button [disabled]="loginForm.invalid" type="submit">Entrar</button>
     </form>
   </div>
 
@@ -128,12 +307,12 @@
       <div class="overlay-panel overlay-left">
         <h1>Bem-vindo de volta!</h1>
         <p>Para se conectar, faça login com suas informações pessoais</p>
-        <button class="ghost" (click)="togglePanel()">Entrar</button>
+        <button (click)="togglePanel()" class="ghost">Entrar</button>
       </div>
       <div class="overlay-panel overlay-right">
         <h1>Não tem uma conta?</h1>
         <p>Crie uma e comece a usar agora mesmo!</p>
-        <button class="ghost" (click)="togglePanel()">Cadastrar</button>
+        <button (click)="togglePanel()" class="ghost">Cadastrar</button>
       </div>
     </div>
   </div>

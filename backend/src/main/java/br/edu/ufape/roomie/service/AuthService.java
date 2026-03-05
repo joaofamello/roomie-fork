@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -20,18 +21,18 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
-    private PasswordEncoder passwordEncoder; 
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username); 
-        if(user == null){
-            throw new UsernameNotFoundException("Usuário não encontrado"); 
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Usuário não encontrado");
         }
 
-        return user; 
+        return user;
     }
 
     public UserResponseDTO register(UserDTO userDTO) {
@@ -51,8 +52,8 @@ public class AuthService implements UserDetailsService {
 
         User newUser = new User(userDTO.getName(), userDTO.getEmail(), userDTO.getCpf(), encryptedPassword, userDTO.getGender(), role);
 
-        if (userDTO.getPhones() != null){
-            for(String numero : userDTO.getPhones()){
+        if (userDTO.getPhones() != null) {
+            for (String numero : userDTO.getPhones()) {
                 newUser.addTelefone(numero);
             }
         }

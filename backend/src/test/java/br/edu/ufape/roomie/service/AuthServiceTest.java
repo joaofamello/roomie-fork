@@ -16,15 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -40,7 +38,7 @@ class AuthServiceTest {
 
     @Test
     @DisplayName("Deve registrar um usuário com senha criptografada e retornar DTO com sucesso")
-    void testaRegistroComSucesso(){
+    void testaRegistroComSucesso() {
         UserDTO userDTO = new UserDTO();
         userDTO.setName("usuario teste");
         userDTO.setEmail("teste@ufape.edu.br");
@@ -77,7 +75,7 @@ class AuthServiceTest {
 
     @Test
     @DisplayName("Deve lançar exceção ao tentar registrar email já existente")
-    void testaExcecaoEmailJaExistente(){
+    void testaExcecaoEmailJaExistente() {
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail("duplicado@ufape.edu.br");
 

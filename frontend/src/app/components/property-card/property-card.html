@@ -1,4 +1,4 @@
-<div class="card" (click)="propertySelected.emit(property)">
+<a [routerLink]="['/details', property.id]" class="card" [attr.aria-label]="property.title">
   <div class="card-image-wrapper">
     <img
       *ngIf="firstPhotoUrl; else noPhoto"
@@ -14,24 +14,21 @@
   <div class="card-body">
     <h3>{{ property.title }}</h3>
 
-    <p class="price">
-      R$ {{ property.price | number:'1.0-0' }}
-    </p>
+    <p class="price">R$ {{ property.price | number: '1.0-0' }}</p>
 
-    <p class="neighborhood" *ngIf="property.address">
+    <p *ngIf="property.address" class="neighborhood">
       {{ property.address.district }}, {{ property.address.city }}
     </p>
-    <p class="neighborhood" *ngIf="!property.address && property.neighborhood">
+    <p *ngIf="!property.address && property.neighborhood" class="neighborhood">
       {{ property.neighborhood }}
     </p>
 
     <div class="card-tags">
-      <span class="tag" *ngIf="property.availableVacancies">
+      <span *ngIf="property.availableVacancies" class="tag">
         {{ property.availableVacancies }} vaga{{ property.availableVacancies > 1 ? 's' : '' }}
       </span>
-      <span class="tag" *ngIf="property.acceptAnimals">
-        Aceita animais
-      </span>
+      <span *ngIf="property.acceptAnimals" class="tag">Aceita animais</span>
+      <span *ngIf="property.hasGarage" class="tag">Garagem</span>
     </div>
   </div>
-</div>
+</a>

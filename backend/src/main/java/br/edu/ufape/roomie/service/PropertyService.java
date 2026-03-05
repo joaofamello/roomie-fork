@@ -1,11 +1,14 @@
 package br.edu.ufape.roomie.service;
 
 import br.edu.ufape.roomie.dto.PropertyRequestDTO;
+import br.edu.ufape.roomie.dto.PropertyResponseDTO;
 import br.edu.ufape.roomie.enums.PropertyStatus;
 import br.edu.ufape.roomie.model.Address;
 import br.edu.ufape.roomie.model.Property;
 import br.edu.ufape.roomie.model.PropertyPhoto;
 import br.edu.ufape.roomie.model.User;
+import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.repository.PropertyPhotoRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -23,10 +26,12 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final FileStorageService fileStorageService;
+        private final PropertyPhotoRepository propertyPhotoRepository;
 
-    public PropertyService(PropertyRepository propertyRepository, FileStorageService fileStorageService) {
+    public PropertyService(PropertyRepository propertyRepository, FileStorageService fileStorageService, PropertyPhotoRepository propertyPhotoRepository) {
         this.propertyRepository = propertyRepository;
         this.fileStorageService = fileStorageService;
+        this.propertyPhotoRepository = propertyPhotoRepository;
     }
 
     @Transactional
@@ -41,6 +46,7 @@ public class PropertyService {
         property.setPrice(dto.getPrice());
         property.setGender(dto.getGender());
         property.setAcceptAnimals(dto.getAcceptAnimals());
+        property.setHasGarage(dto.getHasGarage());
         property.setAvailableVacancies(dto.getAvailableVacancies());
         property.setStatus(PropertyStatus.DRAFT);
 
@@ -86,6 +92,78 @@ public class PropertyService {
         return propertyRepository.save(property);
     }
 
+    @Transactional
+    public void deleteProperty(Long propertyId) {
+        User user = getAuthenticatedUser();
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+
+        if (!property.getOwner().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para excluir este imóvel.");
+        }
+
+        propertyRepository.delete(property);
+    }
+
+    @Transactional
+    public Property setPropertyToDraft(Long propertyId) {
+        User user = getAuthenticatedUser();
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+
+        if (!property.getOwner().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para editar este imóvel.");
+        }
+
+        property.setStatus(PropertyStatus.DRAFT);
+        return propertyRepository.save(property);
+    }
+
+    @Transactional
+    public Property updateProperty(Long propertyId, PropertyRequestDTO dto, List<MultipartFile> photos) {
+        User user = getAuthenticatedUser();
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+
+        if (!property.getOwner().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para editar este imóvel.");
+        }
+
+        property.setTitle(dto.getTitle());
+        property.setDescription(dto.getDescription());
+        property.setType(dto.getType());
+        property.setPrice(dto.getPrice());
+        property.setGender(dto.getGender());
+        property.setAcceptAnimals(dto.getAcceptAnimals());
+        property.setHasGarage(dto.getHasGarage());
+        property.setAvailableVacancies(dto.getAvailableVacancies());
+        property.setStatus(PropertyStatus.DRAFT);
+
+        Address address = property.getAddress();
+        address.setStreet(dto.getAddress().getStreet());
+        address.setDistrict(dto.getAddress().getDistrict());
+        address.setNumber(dto.getAddress().getNumber());
+        address.setCity(dto.getAddress().getCity());
+        address.setState(dto.getAddress().getState());
+        address.setCep(dto.getAddress().getCep());
+
+        if (photos != null && !photos.isEmpty()) {
+            property.getPhotos().clear();
+            for (MultipartFile photo : photos) {
+                String fileName = fileStorageService.storeFile(photo);
+                PropertyPhoto propertyPhoto = new PropertyPhoto();
+                propertyPhoto.setPath("/images/" + fileName);
+                propertyPhoto.setProperty(property);
+                property.getPhotos().add(propertyPhoto);
+            }
+        }
+
+        return propertyRepository.save(property);
+    }
+
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -100,4 +178,19 @@ public class PropertyService {
 
         return (User) principal;
     }
+
+    @Transactional(readOnly = true)
+    public PropertyResponseDTO getPropertyDetails(Long id){
+        getAuthenticatedUser();
+
+        PropertyDetailView details = propertyRepository.findDetailById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+        
+        if(!"ACTIVE".equals(details.getStatus())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Anúncio não está disponivel");
+        }
+        List<String> photos = propertyPhotoRepository.findPhotosByPropertyId(id);
+
+        return new PropertyResponseDTO(details, photos);
+    }
+
 }

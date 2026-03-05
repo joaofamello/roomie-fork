@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import {Component} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-unauthorized',
@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './unauthorized.css'
 })
 export class Unauthorized {
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {
+  }
 
   goBack() {
     this.router.navigate(['/login']);

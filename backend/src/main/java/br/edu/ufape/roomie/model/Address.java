@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
+@BatchSize(size = 30)
 @Entity
 @Table(name = "endereco")
 @Data
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_endereco")
+    @Column(name = "id_endereco")
     private Long idAddress;
 
     @JsonIgnore
@@ -28,7 +30,7 @@ public class Address {
     private Property property;
 
     @Column(name = "rua", nullable = false, length = 100)
-    private  String street;
+    private String street;
     @Column(name = "bairro", nullable = false, length = 100)
     private String district;
     @Column(name = "numero", nullable = false, length = 10)

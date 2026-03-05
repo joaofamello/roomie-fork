@@ -1,4 +1,4 @@
-import { PropertyType } from './property-type.enum';
+import {PropertyType} from './property-type.enum';
 
 export interface Address {
   street: string;
@@ -16,6 +16,7 @@ export interface PropertyRequest {
   price: number;
   availableVacancies: number; // mapeado para numero de quartos
   address: Address;
-  gender?: string; 
+  gender?: string;
   acceptAnimals?: boolean;
+  hasGarage?: boolean;
 }

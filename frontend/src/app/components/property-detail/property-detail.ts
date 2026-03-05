@@ -1,6 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Property } from '../../models/property';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Property} from '../../models/property';
+import {PropertyDetailView} from '../../models/property-detail-view';
+import {environment} from '../../../enviroments/enviroment';
 
 @Component({
   selector: 'app-property-detail',
@@ -11,9 +13,10 @@ import { Property } from '../../models/property';
 })
 export class PropertyDetail {
   @Input() property!: Property;
+  @Input() detail?: PropertyDetailView | null;
   @Output() closed = new EventEmitter<void>();
 
-  readonly apiBase = 'http://localhost:8080';
+  readonly apiBase = environment.apiUrl;
 
   selectedPhotoIndex = 0;
 
@@ -23,13 +26,18 @@ export class PropertyDetail {
 
   get selectedPhotoUrl(): string | null {
     if (this.photos.length > 0) {
-      return this.apiBase + this.photos[this.selectedPhotoIndex].path;
+      const path = this.photos[this.selectedPhotoIndex].path;
+      return path.startsWith('http') ? path : this.apiBase + path;
     }
     return null;
   }
 
   selectPhoto(index: number): void {
     this.selectedPhotoIndex = index;
+  }
+
+  photoUrl(path: string): string {
+    return path.startsWith('http') ? path : this.apiBase + path;
   }
 
   typeLabel(type?: string): string {

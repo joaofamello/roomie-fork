@@ -19,12 +19,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import java.math.BigDecimal;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -130,5 +134,60 @@ class PropertyServiceTest {
 
         verify(propertyRepository, never()).save(any());
         verify(fileStorageService, never()).storeFile(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar cadastrar um imóvel com dados inválidos")
+    void shouldThrowExceptionWhenDataIsInvalid() {
+        var invalidProperty = new PropertyRequestDTO();
+        invalidProperty.setTitle("");
+        invalidProperty.setPrice(new BigDecimal("-500"));
+
+        var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+        var userMock = new User();
+        userMock.setId(1L);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(userMock);
+        SecurityContextHolder.setContext(securityContext);
+
+        assertThrows(Exception.class, () -> {
+            propertyService.createProperty(invalidProperty, Collections.emptyList());
+        });
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro 403 Forbidden se o usuário tentar publicar um imóvel de outro dono")
+    void shouldThrowForbiddenWhenPublishingPropertyOfAnotherOwner() {
+        var propertyId = 50L;
+
+        var realOwner = new User();
+        realOwner.setId(1L);
+
+        var property = new Property();
+        property.setId(propertyId);
+        property.setOwner(realOwner);
+
+        var impostor = new User();
+        impostor.setId(2L);
+
+        var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn(impostor);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        assertThrows(ResponseStatusException.class, () -> {
+            propertyService.publishProperty(propertyId);
+        });
+
+        verify(propertyRepository, never()).save(any(Property.class));
+
     }
 }

@@ -1,28 +1,19 @@
 <ng-container *ngIf="!hasSearched">
   <div class="hero-container">
-
-    <header class="topbar-blue">
-      <h2 class="logo-text">Roomie</h2>
-      <div class="header-buttons">
-        <button class="profile-btn" (click)="goToCreateProperty()">+ Anunciar Imóvel</button>
-
-        <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
-        <button class="profile-btn" (click)="onLogout()">Sair</button>
-      </div>
-    </header>
+    <app-header></app-header>
 
     <div class="hero-content">
       <h1>Encontre seu novo lar.</h1>
       <p>Repúblicas, quartos e apartamentos para dividir com a sua vibe.</p>
 
       <div class="big-search-box">
-        <input 
-          type="text" 
-          [formControl]="initialSearch" 
+        <input
+          (keyup.enter)="onInitialSearch()"
+          [formControl]="initialSearch"
           placeholder="Para qual cidade ou bairro você vai?"
-          (keyup.enter)="onInitialSearch()" 
+          type="text"
         />
-        <button class="btn-big-search" (click)="onInitialSearch()">Buscar</button>
+        <button (click)="onInitialSearch()" class="btn-big-search">Buscar</button>
       </div>
     </div>
   </div>
@@ -30,54 +21,58 @@
 
 <ng-container *ngIf="hasSearched">
   <div class="dashboard-container">
+    <app-header (logoClicked)="goBackHome()"></app-header>
 
-    <header class="topbar-blue">
-      <h2 class="logo-text" (click)="goBackHome()" style="cursor: pointer;" title="Voltar ao Início">Roomie</h2>
-      <div class="header-buttons">
-        <button class="profile-btn" (click)="goToCreateProperty()">+ Anunciar Imóvel</button>
-
-        <button class="profile-btn" (click)="goToProfile()">Meu Perfil</button>
-        <button class="profile-btn" (click)="onLogout()">Sair</button>
-      </div>
-      
-    </header>
-
-    <div class="search-section" [formGroup]="filterForm">
+    <div [formGroup]="filterForm" class="search-section">
       <div class="search-bar">
         <input
-          type="text"
+          (keyup.enter)="onFilter()"
           formControlName="location"
           placeholder="Buscar por cidade..."
-          (keyup.enter)="onFilter()"
+          type="text"
         />
-        <button class="btn-search" (click)="onFilter()">Buscar</button>
+        <button (click)="onFilter()" class="btn-search">Buscar</button>
       </div>
     </div>
 
     <div class="main-content">
       <aside class="sidebar">
         <h3>Filtros</h3>
-        <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
-
+        <form (ngSubmit)="onFilter()" [formGroup]="filterForm">
           <div class="filter-group">
-            <label>Bairro</label>
-            <input type="text" formControlName="district" placeholder="Ex: Boa Vista" />
+            <label for="filter-district">Bairro</label>
+            <input
+              id="filter-district"
+              formControlName="district"
+              placeholder="Ex: Boa Vista"
+              type="text"
+            />
           </div>
 
           <div class="filter-group price-group">
             <div>
-              <label>Preço Mín.</label>
-              <input type="number" formControlName="minPrice" placeholder="R$ 0" />
+              <label for="filter-minPrice">Preço Mín.</label>
+              <input
+                id="filter-minPrice"
+                formControlName="minPrice"
+                placeholder="R$ 0"
+                type="number"
+              />
             </div>
             <div>
-              <label>Preço Máx.</label>
-              <input type="number" formControlName="maxPrice" placeholder="R$ 2000" />
+              <label for="filter-maxPrice">Preço Máx.</label>
+              <input
+                id="filter-maxPrice"
+                formControlName="maxPrice"
+                placeholder="R$ 2000"
+                type="number"
+              />
             </div>
           </div>
 
           <div class="filter-group">
-            <label>Tipo de Imóvel</label>
-            <select formControlName="propertyType">
+            <label for="filter-propertyType">Tipo de Imóvel</label>
+            <select id="filter-propertyType" formControlName="propertyType">
               <option value="">Todos os tipos</option>
               <option value="HOUSE">Casa</option>
               <option value="APARTMENT">Apartamento</option>
@@ -86,23 +81,20 @@
             </select>
           </div>
 
-          <button type="button" class="btn-filter" (click)="onFilter()">Aplicar Filtros</button>
+          <button (click)="onFilter()" class="btn-filter" type="button">Aplicar Filtros</button>
         </form>
       </aside>
 
       <section class="results-area">
         <div class="results-header">
           <h2>Resultados da Busca</h2>
-          <p>Mostrando imóveis para: <strong>{{ appliedLocation || 'Qualquer lugar' }}</strong></p>
+          <p>
+            Mostrando imóveis para: <strong>{{ appliedLocation || 'Qualquer lugar' }}</strong>
+          </p>
         </div>
 
-        <app-property-list 
-           [properties]="properties" 
-           [loading]="isLoading">
-        </app-property-list>
-
+        <app-property-list [loading]="isLoading" [properties]="properties"> </app-property-list>
       </section>
-
     </div>
   </div>
 </ng-container>
