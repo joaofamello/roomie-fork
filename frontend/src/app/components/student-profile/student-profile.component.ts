@@ -7,6 +7,7 @@ import { StudentService } from '../../services/student.service';
 import { UserService } from '../../services/user.service';
 import { HeaderComponent } from '../shared/header/header.component';
 import { take } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-student-profile',
@@ -34,6 +35,7 @@ export class StudentProfileComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly toast = inject(ToastService);
 
   ngOnInit(): void {
     this.studentForm = this.fb.group({
@@ -82,6 +84,7 @@ export class StudentProfileComponent implements OnInit {
 
       if (!user.id) {
         this.errorMessage = 'Sessão expirada. Por favor, faça login novamente.';
+        this.toast.error(this.errorMessage);
         this.isLoading = false;
         setTimeout(() => {
           this.auth.logout();
@@ -102,6 +105,7 @@ export class StudentProfileComponent implements OnInit {
           this.isLoading = false;
           this.hasProfile = true;
           this.successMessage = 'Perfil de estudante salvo com sucesso!';
+          this.toast.success(this.successMessage);
           this.cdr.detectChanges();
         },
         error: () => {
@@ -110,11 +114,13 @@ export class StudentProfileComponent implements OnInit {
             next: () => {
               this.isLoading = false;
               this.successMessage = 'Perfil de estudante atualizado com sucesso!';
+              this.toast.success(this.successMessage);
               this.cdr.detectChanges();
             },
             error: () => {
               this.isLoading = false;
               this.errorMessage = 'Erro ao salvar perfil de estudante. Tente novamente.';
+              this.toast.error(this.errorMessage);
               this.cdr.detectChanges();
             }
           });
@@ -151,11 +157,13 @@ export class StudentProfileComponent implements OnInit {
       next: () => {
         this.isSavingPhones = false;
         this.phonesSuccess = 'Telefones salvos com sucesso!';
+        this.toast.success(this.phonesSuccess);
         this.cdr.detectChanges();
       },
       error: () => {
         this.isSavingPhones = false;
         this.phonesError = 'Erro ao salvar telefones. Tente novamente.';
+        this.toast.error(this.phonesError);
         this.cdr.detectChanges();
       }
     });

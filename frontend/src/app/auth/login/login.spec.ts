@@ -7,12 +7,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '../auth';
 import { of } from 'rxjs';
 import { LoginResponse } from '../user.interface';
+import { ToastService } from '../../services/toast.service';
 
 describe('Login', () => {
   let component!: Login;
   let fixture!: ComponentFixture<Login>;
   let auth!: Auth;
   let router!: Router;
+  let toastService!: ToastService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -25,6 +27,7 @@ describe('Login', () => {
 
     auth = TestBed.inject(Auth);
     router = TestBed.inject(Router);
+    toastService = TestBed.inject(ToastService);
 
     fixture.detectChanges();
   });
@@ -65,7 +68,7 @@ describe('Login', () => {
     };
     const registerSpy = jest.spyOn(auth, 'register').mockReturnValue(of(mockUserResponse as any));
 
-    const alertSpy = jest.spyOn(globalThis, 'alert').mockImplementation(() => {});
+    const toastSuccessSpy = jest.spyOn(toastService, 'success');
     const togglePanelSpy = jest.spyOn(component, 'togglePanel');
 
     component.registerForm.controls['name'].setValue('João Francisco');
@@ -87,7 +90,7 @@ describe('Login', () => {
       password: 'senhaSegura123', // NOSONAR
     });
 
-    expect(alertSpy).toHaveBeenCalledWith('Cadastro realizado com sucesso! Faça login.');
+    expect(toastSuccessSpy).toHaveBeenCalledWith('Cadastro realizado com sucesso! Faça login.');
     expect(togglePanelSpy).toHaveBeenCalled();
   });
 });
