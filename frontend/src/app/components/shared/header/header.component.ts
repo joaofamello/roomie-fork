@@ -41,11 +41,6 @@ export class HeaderComponent {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  /**
-   * Keyboard handler on the toggle button:
-   * Enter/Space → toggle, Escape → close,
-   * ArrowDown → open and focus first item.
-   */
   onButtonKeydown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'Enter':
@@ -65,10 +60,6 @@ export class HeaderComponent {
     }
   }
 
-  /**
-   * Keyboard handler inside the dropdown:
-   * ArrowDown/ArrowUp → navigate items, Escape → close and return focus to button.
-   */
   onMenuKeydown(event: KeyboardEvent): void {
     const items = this.getMenuItems();
     const current = document.activeElement as HTMLElement;
@@ -95,9 +86,6 @@ export class HeaderComponent {
     }
   }
 
-  /**
-   * Handles empty / whitespace-only names gracefully.
-   */
   getInitials(name: string): string {
     if (!name?.trim()) return 'U';
     const names = name.trim().split(' ');
@@ -126,6 +114,11 @@ export class HeaderComponent {
   goToMyProperties(): void {
     this.isMenuOpen = false;
     this.router.navigate(['/meus-imoveis']);
+  }
+
+  goToChats(): void {
+    this.isMenuOpen = false;
+    this.router.navigate(['/chats']);
   }
 
   goToFavorites(): void {
