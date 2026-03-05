@@ -1,0 +1,185 @@
+<app-header></app-header>
+
+<div class="page-wrapper">
+
+  <!-- ── Cabeçalho ── -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="material-icons page-icon">people_alt</span>
+      <div>
+        <h2>Gerenciamento de Candidatos</h2>
+        <p class="subtitle">Visualize e gerencie os estudantes interessados nos seus anúncios.</p>
+      </div>
+    </div>
+    <a class="btn-back" routerLink="/meus-imoveis">
+      <span class="material-icons">arrow_back</span>
+      Meus Imóveis
+    </a>
+  </div>
+
+  <!-- ── Loading ── -->
+  <div class="loading-state" *ngIf="isLoading">
+    <span class="material-icons spinning">sync</span>
+    <p>Carregando candidatos...</p>
+  </div>
+
+  <!-- ── Erro ── -->
+  <div class="error-state" *ngIf="!isLoading && hasError">
+    <span class="material-icons">error_outline</span>
+    <p>Não foi possível carregar os dados.</p>
+    <button class="btn-retry" (click)="loadAll()">
+      <span class="material-icons">refresh</span>
+      Tentar novamente
+    </button>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !hasError">
+
+    <!-- ── Estado vazio: nenhum imóvel com candidato ── -->
+    <div class="empty-state" *ngIf="propertyGroups.length === 0">
+      <span class="material-icons empty-icon">inbox</span>
+      <h3>Nenhum candidato ainda</h3>
+      <p>Quando estudantes demonstrarem interesse nos seus anúncios, eles aparecerão aqui.</p>
+      <a class="btn-back" routerLink="/meus-imoveis">Ver meus imóveis</a>
+    </div>
+
+    <ng-container *ngIf="propertyGroups.length > 0">
+
+      <!-- ── Painel de estatísticas ── -->
+      <div class="stats-panel">
+        <div class="stat-card">
+          <span class="material-icons stat-icon">group</span>
+          <span class="stat-value">{{ totalCandidatos }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-card stat-pending" [class.active]="activeStatusFilter === InterestStatus.PENDING" (click)="setStatusFilter(InterestStatus.PENDING)" role="button" tabindex="0" (keydown.enter)="setStatusFilter(InterestStatus.PENDING)">
+          <span class="material-icons stat-icon">hourglass_empty</span>
+          <span class="stat-value">{{ totalPendentes }}</span>
+          <span class="stat-label">Pendentes</span>
+        </div>
+        <div class="stat-card stat-accepted" [class.active]="activeStatusFilter === InterestStatus.ACCEPTED" (click)="setStatusFilter(InterestStatus.ACCEPTED)" role="button" tabindex="0" (keydown.enter)="setStatusFilter(InterestStatus.ACCEPTED)">
+          <span class="material-icons stat-icon">check_circle</span>
+          <span class="stat-value">{{ totalAceitos }}</span>
+          <span class="stat-label">Aceitos</span>
+        </div>
+        <div class="stat-card stat-rejected" [class.active]="activeStatusFilter === InterestStatus.REJECTED" (click)="setStatusFilter(InterestStatus.REJECTED)" role="button" tabindex="0" (keydown.enter)="setStatusFilter(InterestStatus.REJECTED)">
+          <span class="material-icons stat-icon">cancel</span>
+          <span class="stat-value">{{ totalRecusados }}</span>
+          <span class="stat-label">Recusados</span>
+        </div>
+      </div>
+
+      <!-- ── Barra de filtros ── -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Status:</span>
+          <div class="filter-chips">
+            <button
+              *ngFor="let f of filterOptions"
+              class="chip"
+              [class.chip-active]="activeStatusFilter === f"
+              (click)="setStatusFilter(f)">
+              {{ filterLabel(f) }}
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Imóvel:</span>
+          <select class="filter-select" (change)="setPropertyFilter($any($event.target).value === 'ALL' ? 'ALL' : +$any($event.target).value)">
+            <option value="ALL">Todos os imóveis</option>
+            <option *ngFor="let g of propertyGroups" [value]="g.property.idImovel">
+              {{ g.property.titulo }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Resultado vazio após filtro ── -->
+      <div class="empty-filter-state" *ngIf="filteredGroups.length === 0">
+        <span class="material-icons">search_off</span>
+        <p>Nenhum candidato com o filtro selecionado.</p>
+        <button class="btn-chip-clear" (click)="setStatusFilter('ALL'); setPropertyFilter('ALL')">
+          Limpar filtros
+        </button>
+      </div>
+
+      <!-- ── Grupos por imóvel ── -->
+      <div class="groups-container">
+        <div class="property-group" *ngFor="let group of filteredGroups">
+
+          <!-- Cabeçalho do grupo -->
+          <div class="group-header">
+            <div class="group-header-left">
+              <span class="material-icons group-icon">home_work</span>
+              <div>
+                <h3 class="group-title">{{ group.property.titulo }}</h3>
+                <p class="group-address">
+                  {{ group.property.rua }}, {{ group.property.numEndereco }} ·
+                  {{ group.property.bairro }}, {{ group.property.cidade }}/{{ group.property.estado }}
+                </p>
+              </div>
+            </div>
+            <span class="group-count">
+              {{ group.interests.length }} candidato{{ group.interests.length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+
+          <!-- Tabela de candidatos (desktop) -->
+          <div class="table-wrapper">
+            <table class="candidates-table">
+              <thead>
+                <tr>
+                  <th>Estudante</th>
+                  <th>Curso</th>
+                  <th>Instituição</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let interest of group.interests">
+                  <td data-label="Estudante">{{ interest.studentName }}</td>
+                  <td data-label="Curso">{{ interest.major }}</td>
+                  <td data-label="Instituição">{{ interest.institution }}</td>
+                  <td data-label="Data">{{ interest.interestDate | date:'dd/MM/yyyy' }}</td>
+                  <td data-label="Status">
+                    <span class="status-badge" [ngClass]="interestStatusClass(interest.status)">
+                      {{ interestStatusLabel(interest.status) }}
+                    </span>
+                  </td>
+                  <td data-label="Ações" class="actions-cell">
+                    <button
+                      *ngIf="interest.status !== InterestStatus.ACCEPTED"
+                      class="btn-accept"
+                      title="Aceitar candidato"
+                      (click)="updateCandidateStatus(interest.interestId, InterestStatus.ACCEPTED, group.property.idImovel)">
+                      <span class="material-icons">check</span>
+                    </button>
+                    <button
+                      *ngIf="interest.status !== InterestStatus.REJECTED"
+                      class="btn-reject"
+                      title="Recusar candidato"
+                      (click)="updateCandidateStatus(interest.interestId, InterestStatus.REJECTED, group.property.idImovel)">
+                      <span class="material-icons">close</span>
+                    </button>
+                    <a
+                      class="btn-contact"
+                      [href]="'mailto:' + interest.studentName"
+                      title="Entrar em contato">
+                      <span class="material-icons">mail</span>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </ng-container>
+  </ng-container>
+
+</div>

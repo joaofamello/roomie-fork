@@ -1,0 +1,568 @@
+/* ───────────────────────────────────────────
+   candidatos-dashboard.css
+   Tela de gerenciamento de candidatos
+──────────────────────────────────────────── */
+
+:host {
+  display: block;
+  font-family: 'Raleway', sans-serif;
+  background: #f6f5f7;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* ── Cabeçalho ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-icon {
+  font-size: 42px;
+  color: #0D83D7;
+}
+
+.page-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #0a6ab5;
+  border: 1.5px solid #0a6ab5;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-back:hover {
+  background: #0a6ab5;
+  color: #fff;
+}
+
+.btn-back .material-icons { font-size: 17px; }
+
+/* ── Loading ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 0;
+  color: #888;
+  font-size: 14px;
+}
+
+.loading-state .material-icons { font-size: 40px; color: #0D83D7; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinning { animation: spin 1s linear infinite; }
+
+/* ── Estado de erro ── */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 0;
+  color: #c0392b;
+  font-size: 14px;
+}
+
+.error-state .material-icons { font-size: 48px; }
+
+.btn-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-retry:hover { background: #a93226; }
+.btn-retry .material-icons { font-size: 17px; }
+
+/* ── Estado vazio ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 24px;
+  background: #fff;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #e5eef7;
+}
+
+.empty-icon {
+  font-size: 56px;
+  color: #cce0f5;
+}
+
+.empty-state h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+}
+
+/* ── Painel de estatísticas ── */
+.stats-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1.5px solid #e5eef7;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 120px;
+  flex: 1;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  cursor: default;
+}
+
+/* Cards de status são clicáveis */
+.stat-pending,
+.stat-accepted,
+.stat-rejected {
+  cursor: pointer;
+}
+
+.stat-pending:hover,
+.stat-accepted:hover,
+.stat-rejected:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+/* Estado activo do card de filtro */
+.stat-pending.active  { border-color: #856404; background: #fffaeb; }
+.stat-accepted.active { border-color: #155724; background: #eafaf1; }
+.stat-rejected.active { border-color: #721c24; background: #fdf3f4; }
+
+.stat-pending.active  .stat-icon { color: #856404; }
+.stat-accepted.active .stat-icon { color: #155724; }
+.stat-rejected.active .stat-icon { color: #721c24; }
+
+.stat-icon {
+  font-size: 24px;
+  color: #0D83D7;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Barra de filtros ── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5eef7;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 28px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #d0dde8;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.chip:hover { border-color: #0D83D7; color: #0D83D7; }
+
+.chip-active {
+  background: #0D83D7;
+  border-color: #0D83D7;
+  color: #fff;
+}
+
+.filter-select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #d0dde8;
+  background: #fff;
+  font-size: 13px;
+  color: #333;
+  font-family: 'Raleway', sans-serif;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+  max-width: 260px;
+}
+
+.filter-select:focus { border-color: #0D83D7; }
+
+/* ── Resultado vazio pós-filtro ── */
+.empty-filter-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 24px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px dashed #d0dde8;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.empty-filter-state .material-icons { font-size: 44px; color: #c5cfd8; }
+
+.btn-chip-clear {
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 1.5px solid #0D83D7;
+  background: transparent;
+  color: #0D83D7;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-chip-clear:hover { background: #0D83D7; color: #fff; }
+
+/* ── Grupos por imóvel ── */
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.property-group {
+  background: #fff;
+  border: 1px solid #e5eef7;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Cabeçalho do grupo */
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f4f7fb;
+  border-bottom: 1px solid #e5eef7;
+}
+
+.group-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.group-icon {
+  font-size: 28px;
+  color: #0D83D7;
+}
+
+.group-title {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.group-address {
+  margin: 0;
+  font-size: 12px;
+  color: #777;
+}
+
+.group-count {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  background: #e0edf8;
+  color: #0a6ab5;
+  border-radius: 20px;
+}
+
+/* ── Tabela ── */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.candidates-table th {
+  text-align: left;
+  padding: 10px 16px;
+  background: #fff;
+  color: #666;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1.5px solid #e5eef7;
+  white-space: nowrap;
+}
+
+.candidates-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #f0f3f8;
+  vertical-align: middle;
+  color: #333;
+}
+
+.candidates-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.candidates-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+/* ── Badge de status ── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-pending  { background: #fff3cd; color: #856404; }
+.badge-accepted { background: #d1e7dd; color: #155724; }
+.badge-rejected { background: #f8d7da; color: #721c24; }
+
+/* ── Botões de ação ── */
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-accept,
+.btn-reject,
+.btn-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn-accept:hover,
+.btn-reject:hover,
+.btn-contact:hover {
+  opacity: 0.8;
+  transform: scale(1.08);
+}
+
+.btn-accept  { background: #d1e7dd; color: #155724; }
+.btn-reject  { background: #f8d7da; color: #721c24; }
+.btn-contact { background: #dce8f8; color: #0a6ab5; }
+
+.btn-accept .material-icons,
+.btn-reject .material-icons,
+.btn-contact .material-icons { font-size: 18px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVIDADE
+═══════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .page-wrapper {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 24px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header h2 { font-size: 18px; }
+
+  .btn-back {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats-panel { gap: 8px; }
+
+  .stat-card {
+    flex-basis: calc(50% - 4px);
+    flex-grow: 0;
+    min-width: 0;
+    padding: 14px 12px;
+  }
+
+  .stat-value { font-size: 18px; }
+  .stat-label { font-size: 10px; }
+
+  .filter-bar {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .filter-select { max-width: 100%; width: 100%; }
+
+  /* Em mobile a tabela vira lista de cards responsivos */
+  .candidates-table thead { display: none; }
+
+  .candidates-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5eef7;
+    gap: 8px;
+  }
+
+  .candidates-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .candidates-table td {
+    padding: 0;
+    border-bottom: none;
+    font-size: 13px;
+  }
+
+  /* Rótulos das células a partir do atributo data-label */
+  .candidates-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    font-weight: 700;
+    color: #555;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .actions-cell { flex-wrap: wrap; }
+
+  .group-header { padding: 14px 16px; }
+}
+
+@media (max-width: 480px) {
+  .stat-card { flex-basis: 100%; }
+
+  .page-icon { font-size: 32px; }
+
+  .group-title { font-size: 14px; }
+}

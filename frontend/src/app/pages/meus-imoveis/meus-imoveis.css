@@ -63,6 +63,37 @@
 .btn-new:hover { background: #085a9a; }
 .btn-new .material-icons { font-size: 18px; }
 
+/* Botão para o dashboard de candidatos */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-candidates-dash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #0a6ab5;
+  border: 1.5px solid #0a6ab5;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-candidates-dash:hover {
+  background: #0a6ab5;
+  color: #fff;
+}
+
+.btn-candidates-dash .material-icons { font-size: 18px; }
+
 /* ── Stats ── */
 .stats-panel {
   display: flex;
@@ -442,7 +473,13 @@
     font-size: 18px;
   }
 
-  .btn-new {
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-new,
+  .btn-candidates-dash {
     width: 100%;
     justify-content: center;
   }

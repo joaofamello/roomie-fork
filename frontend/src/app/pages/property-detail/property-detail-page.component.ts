@@ -45,20 +45,18 @@ export class PropertyDetailPageComponent implements OnInit {
     this.propertyService.getDetailById(id).subscribe({
       next: (data) => {
         this.detail = data;
-        this.interesseEnviado = this.favoritesService.isFavorite(data.idImovel);
         this.isLoading = false;
         this.cdr.detectChanges();
 
-        if (!this.interesseEnviado) {
-          this.propertyService.checkInterest(id).subscribe({
-            next: (hasInterest) => {
-              if (hasInterest) {
-                this.interesseEnviado = true;
-                this.cdr.detectChanges();
-              }
-            },
-          });
-        }
+        // Verifica no servidor se já demonstrou interesse (fonte confiável)
+        this.propertyService.checkInterest(id).subscribe({
+          next: (hasInterest) => {
+            if (hasInterest) {
+              this.interesseEnviado = true;
+              this.cdr.detectChanges();
+            }
+          },
+        });
       },
       error: (err) => {
         console.error('Erro ao carregar detalhes do imóvel:', err);
@@ -122,24 +120,30 @@ export class PropertyDetailPageComponent implements OnInit {
   }
 
   demonstrarInteresse(): void {
-    if (!this.detail) return;
-
-    this.favoritesService.addFavorite({
-      id: this.detail.idImovel,
-      titulo: this.detail.titulo,
-      preco: this.detail.preco,
-      tipo: this.detail.tipo,
-      bairro: this.detail.bairro,
-      cidade: this.detail.cidade,
-      estado: this.detail.estado,
-      addedAt: new Date().toISOString(),
-    });
-    this.interesseEnviado = true;
-    this.cdr.detectChanges();
+    if (!this.detail || this.interesseEnviado) return;
 
     this.propertyService.expressInterest(this.detail.idImovel).subscribe({
+      next: () => {
+        if (!this.detail) return;
+        this.favoritesService.addFavorite({
+          id: this.detail.idImovel,
+          titulo: this.detail.titulo,
+          preco: this.detail.preco,
+          tipo: this.detail.tipo,
+          bairro: this.detail.bairro,
+          cidade: this.detail.cidade,
+          estado: this.detail.estado,
+          addedAt: new Date().toISOString(),
+        });
+        this.interesseEnviado = true;
+        this.cdr.detectChanges();
+      },
       error: (err) => {
-        if (err.status !== 409) {
+        if (err.status === 409) {
+          // Já havia demonstrado interesse — refletir no UI
+          this.interesseEnviado = true;
+          this.cdr.detectChanges();
+        } else {
           console.error('Erro ao registrar interesse no servidor:', err);
         }
       },
