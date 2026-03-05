@@ -40,6 +40,19 @@ public class InterestController {
         }
     }
 
+    @GetMapping("/{id}/interest/check")
+    public ResponseEntity<?> checkInterest(
+            @PathVariable("id") Long propertyId,
+            @AuthenticationPrincipal User loggedInUser) {
+
+        if (!(loggedInUser instanceof Student student)) {
+            return ResponseEntity.ok(java.util.Map.of("hasInterest", false));
+        }
+
+        boolean hasInterest = interestService.hasInterest(propertyId, student);
+        return ResponseEntity.ok(java.util.Map.of("hasInterest", hasInterest));
+    }
+
     @GetMapping("/{id}/interests")
     public ResponseEntity<?> getInterests(
             @PathVariable("id") Long propertyId,

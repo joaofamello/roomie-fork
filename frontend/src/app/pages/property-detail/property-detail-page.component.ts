@@ -48,6 +48,17 @@ export class PropertyDetailPageComponent implements OnInit {
         this.interesseEnviado = this.favoritesService.isFavorite(data.idImovel);
         this.isLoading = false;
         this.cdr.detectChanges();
+
+        if (!this.interesseEnviado) {
+          this.propertyService.checkInterest(id).subscribe({
+            next: (hasInterest) => {
+              if (hasInterest) {
+                this.interesseEnviado = true;
+                this.cdr.detectChanges();
+              }
+            },
+          });
+        }
       },
       error: (err) => {
         console.error('Erro ao carregar detalhes do imóvel:', err);
@@ -112,6 +123,7 @@ export class PropertyDetailPageComponent implements OnInit {
 
   demonstrarInteresse(): void {
     if (!this.detail) return;
+
     this.favoritesService.addFavorite({
       id: this.detail.idImovel,
       titulo: this.detail.titulo,
@@ -123,6 +135,15 @@ export class PropertyDetailPageComponent implements OnInit {
       addedAt: new Date().toISOString(),
     });
     this.interesseEnviado = true;
+    this.cdr.detectChanges();
+
+    this.propertyService.expressInterest(this.detail.idImovel).subscribe({
+      error: (err) => {
+        if (err.status !== 409) {
+          console.error('Erro ao registrar interesse no servidor:', err);
+        }
+      },
+    });
   }
 }
 

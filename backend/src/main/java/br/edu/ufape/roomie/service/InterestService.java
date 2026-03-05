@@ -60,6 +60,13 @@ public class InterestService {
         )).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasInterest(Long propertyId, Student student) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+        return interestRepository.existsByStudentAndProperty(student, property);
+    }
+
     @Transactional
     public void updateInterestStatus(Long interestId, InterestStatus newStatus, User loggedInOwner) {
         Interest interest = interestRepository.findById(interestId)
