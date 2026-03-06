@@ -33,6 +33,25 @@
       </div>
     </div>
 
+    <!-- Estado do imóvel (atualizado pelo trigger) -->
+    <div class="property-status-card" *ngIf="property">
+      <div class="psc-row">
+        <span class="material-icons psc-icon">home</span>
+        <span class="psc-label">Situação do imóvel</span>
+        <span class="psc-badge"
+          [class.psc-active]="property.status === 'ACTIVE'"
+          [class.psc-rented]="property.status === 'RENTED'"
+          [class.psc-draft]="property.status === 'DRAFT'">
+          {{ property.status === 'ACTIVE' ? 'Ativo' : property.status === 'RENTED' ? 'Alugado' : 'Rascunho' }}
+        </span>
+      </div>
+      <div class="psc-row">
+        <span class="material-icons psc-icon">meeting_room</span>
+        <span class="psc-label">Vagas disponíveis</span>
+        <span class="psc-value">{{ property.availableVacancies }}</span>
+      </div>
+    </div>
+
     <!-- Botão propor contrato (só proprietário) -->
     <button class="btn-contract" *ngIf="isOwner()" (click)="showContractModal = true">
       <span class="material-icons">description</span>

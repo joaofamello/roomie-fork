@@ -14,6 +14,7 @@ import {HabitsComponent} from './pages/habits/habits.component';
 import {CandidatosDashboardComponent} from './pages/candidatos-dashboard/candidatos-dashboard';
 import {ChatListComponent} from './pages/chat/chat-list/chat-list.component';
 import {ChatDetailComponent} from './pages/chat/chat-detail/chat-detail.component';
+import {RelatoriosComponent} from './pages/relatorios/relatorios';
 
 export const routes: Routes = [
   {
@@ -113,6 +114,12 @@ export const routes: Routes = [
     component: ChatDetailComponent,
     canActivate: [authGuard],
     title: 'Chat - Roomie'
+  },
+  {
+    path: 'relatorios',
+    component: RelatoriosComponent,
+    canActivate: [authGuard],
+    title: 'Relatórios - Roomie'
   },
   {
     path: '**',

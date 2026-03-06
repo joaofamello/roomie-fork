@@ -14,10 +14,12 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ChatService } from '../../../services/chat.service';
 import { ContractService } from '../../../services/contract.service';
+import { PropertyService } from '../../../services/propertyService';
 import { Auth } from '../../../auth/auth';
 import { Chat } from '../../../models/chat.model';
 import { Message } from '../../../models/message.model';
 import { ContractResponse } from '../../../models/contract.model';
+import { Property } from '../../../models/property';
 import { HeaderComponent } from '../../../components/shared/header/header.component';
 import { ContractFormModalComponent } from '../contract-form-modal/contract-form-modal.component';
 import { ToastService } from '../../../services/toast.service';
@@ -34,6 +36,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   chat: Chat | null = null;
+  property: Property | null = null;
   messages: Message[] = [];
   contracts: ContractResponse[] = [];
   newMessage = '';
@@ -50,6 +53,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
   constructor(
     private readonly chatService: ChatService,
     private readonly contractService: ContractService,
+    private readonly propertyService: PropertyService,
     private readonly auth: Auth,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -83,6 +87,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
         this.chat = chat;
         this.loadMessages();
         this.loadContracts();
+        this.loadProperty();
         this.startPolling();
       },
       error: (err) => {
@@ -178,6 +183,17 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
     });
   }
 
+  loadProperty(): void {
+    if (!this.chat) return;
+    this.propertyService.getById(this.chat.propertyId).subscribe({
+      next: (property) => {
+        this.property = property;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar imóvel', err)
+    });
+  }
+
   acceptContract(contractId: number): void {
     this.isProcessingContract = true;
     this.contractService.acceptContract(contractId).subscribe({
@@ -185,6 +201,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
         this.toast.success('Contrato aceito com sucesso!');
         this.isProcessingContract = false;
         this.loadContracts();
+        this.loadProperty();
       },
       error: (err) => {
         console.error('Erro ao aceitar contrato', err);
@@ -201,6 +218,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy, AfterViewChecked 
         this.toast.success('Contrato recusado.');
         this.isProcessingContract = false;
         this.loadContracts();
+        this.loadProperty();
       },
       error: (err) => {
         console.error('Erro ao recusar contrato', err);

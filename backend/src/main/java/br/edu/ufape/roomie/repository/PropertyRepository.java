@@ -2,6 +2,7 @@ package br.edu.ufape.roomie.repository;
 
 import br.edu.ufape.roomie.model.Property;
 import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.projection.PropertyRankingView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,6 +45,12 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             @Param("maxPrice") double maxPrice,
             @Param("type") String type
     );
+
+    @Query(value = "SELECT id_imovel AS idImovel, titulo, tipo, preco, status, cidade, bairro, " +
+            "nome_proprietario AS nomeProprietario, total_avaliacoes AS totalAvaliacoes, " +
+            "media_nota AS mediaNota, pior_nota AS piorNota, melhor_nota AS melhorNota " +
+            "FROM v_ranking_imoveis_avaliados", nativeQuery = true)
+    List<PropertyRankingView> findAllRanking();
     @Query(value = "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, " +
             "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, " +
             "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, " +

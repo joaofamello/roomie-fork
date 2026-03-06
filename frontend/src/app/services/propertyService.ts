@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Property} from '../models/property';
 import {PropertyDetailView} from '../models/property-detail-view';
+import {PropertyRankingView} from '../models/property-ranking-view';
 import {environment} from '../../enviroments/enviroment';
 
 
@@ -64,6 +65,10 @@ export class PropertyService {
   checkInterest(propertyId: number): Observable<boolean> {
     return this.http.get<{hasInterest: boolean}>(`${this.announcementsUrl}/${propertyId}/interest/check`)
       .pipe(map(res => res.hasInterest));
+  }
+
+  getRanking(): Observable<PropertyRankingView[]> {
+    return this.http.get<PropertyRankingView[]>(`${this.apiUrl}/ranking`);
   }
 
 }

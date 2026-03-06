@@ -1,0 +1,134 @@
+<app-header></app-header>
+<div class="page-wrapper">
+
+  <!-- Cabeçalho -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="material-icons page-icon">bar_chart</span>
+      <div>
+        <h2>Relatórios</h2>
+        <p class="subtitle">Visualize dados consolidados do sistema.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abas -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'ranking'" (click)="setTab('ranking')">
+      <span class="material-icons">star</span>
+      Ranking de Imóveis
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'engajamento'" (click)="setTab('engajamento')">
+      <span class="material-icons">people</span>
+      Engajamento de Estudantes
+    </button>
+  </div>
+
+  <!-- ───────── Tab: Ranking de Imóveis ───────── -->
+  <div *ngIf="activeTab === 'ranking'">
+
+    <div class="loading-state" *ngIf="isLoadingRanking">
+      <span class="material-icons spin">autorenew</span>
+      Carregando...
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoadingRanking && ranking.length === 0">
+      <span class="material-icons empty-icon">home</span>
+      <p>Nenhum imóvel encontrado.</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!isLoadingRanking && ranking.length > 0">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Imóvel</th>
+            <th>Tipo</th>
+            <th>Localização</th>
+            <th>Preço</th>
+            <th>Proprietário</th>
+            <th>Status</th>
+            <th>Avaliações</th>
+            <th>Média</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ranking; let i = index">
+            <td class="rank-col">{{ i + 1 }}</td>
+            <td class="title-col">{{ item.titulo }}</td>
+            <td>{{ tipoLabel(item.tipo) }}</td>
+            <td>{{ item.bairro }}, {{ item.cidade }}</td>
+            <td class="price-col">R$ {{ item.preco | number:'1.0-0' }}</td>
+            <td>{{ item.nomeProprietario }}</td>
+            <td>
+              <span class="badge" [ngClass]="statusClass(item.status)">
+                {{ statusLabel(item.status) }}
+              </span>
+            </td>
+            <td class="center-col">{{ item.totalAvaliacoes }}</td>
+            <td class="stars-col" [title]="item.mediaNota !== null ? (item.mediaNota | number:'1.1-1') : 'Sem avaliações'">
+              <span *ngIf="item.mediaNota !== null" class="stars">{{ stars(item.mediaNota) }}</span>
+              <span *ngIf="item.mediaNota === null" class="no-data">—</span>
+            </td>
+            <td class="center-col">
+              <span *ngIf="item.piorNota !== null">{{ item.piorNota }}–{{ item.melhorNota }}</span>
+              <span *ngIf="item.piorNota === null" class="no-data">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ───────── Tab: Engajamento de Estudantes ───────── -->
+  <div *ngIf="activeTab === 'engajamento'">
+
+    <div class="loading-state" *ngIf="isLoadingEngajamento">
+      <span class="material-icons spin">autorenew</span>
+      Carregando...
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoadingEngajamento && engajamento.length === 0">
+      <span class="material-icons empty-icon">school</span>
+      <p>Nenhum estudante encontrado.</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!isLoadingEngajamento && engajamento.length > 0">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Estudante</th>
+            <th>E-mail</th>
+            <th>Curso</th>
+            <th>Instituição</th>
+            <th>Interesses</th>
+            <th>Contratos</th>
+            <th>Avaliações feitas</th>
+            <th>Média dada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of engajamento">
+            <td class="title-col">{{ item.nome }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.curso }}</td>
+            <td>{{ item.instituicao }}</td>
+            <td class="center-col">
+              <span class="chip chip-blue">{{ item.totalInteresses }}</span>
+            </td>
+            <td class="center-col">
+              <span class="chip chip-green">{{ item.totalContratos }}</span>
+            </td>
+            <td class="center-col">{{ item.totalAvaliacoesFeit }}</td>
+            <td class="stars-col" [title]="item.mediaNotaDada !== null ? (item.mediaNotaDada | number:'1.1-1') : 'Sem avaliações dadas'">
+              <span *ngIf="item.mediaNotaDada !== null" class="stars">{{ stars(item.mediaNotaDada) }}</span>
+              <span *ngIf="item.mediaNotaDada === null" class="no-data">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

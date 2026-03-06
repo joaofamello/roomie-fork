@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {StudentContactView} from '../models/student-contact-view';
+import {StudentEngagementView} from '../models/student-engagement-view';
 import {environment} from '../../enviroments/enviroment';
 
 export interface StudentProfileDto {
@@ -33,6 +34,10 @@ export class StudentService {
 
   getById(id: number): Observable<StudentContactView> {
     return this.http.get<StudentContactView>(`${this.apiUrl}/${id}`);
+  }
+
+  getEngagement(): Observable<StudentEngagementView[]> {
+    return this.http.get<StudentEngagementView[]>(`${this.apiUrl}/engagement`);
   }
 }
 

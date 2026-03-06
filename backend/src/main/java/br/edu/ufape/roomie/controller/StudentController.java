@@ -2,6 +2,7 @@ package br.edu.ufape.roomie.controller;
 
 import br.edu.ufape.roomie.dto.StudentDTO;
 import br.edu.ufape.roomie.projection.StudentContactView;
+import br.edu.ufape.roomie.projection.StudentEngagementView;
 import br.edu.ufape.roomie.repository.StudentRepository;
 import br.edu.ufape.roomie.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,18 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<StudentContactView> getById(@PathVariable Long id) {
         return studentRepository.findContactById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/engagement")
+    public ResponseEntity<List<StudentEngagementView>> getAllEngagement() {
+        return ResponseEntity.ok(studentRepository.findAllEngagement());
+    }
+
+    @GetMapping("/{id}/engagement")
+    public ResponseEntity<StudentEngagementView> getEngagementById(@PathVariable Long id) {
+        return studentRepository.findEngagementById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -6,6 +6,7 @@ import br.edu.ufape.roomie.enums.PropertyStatus;
 import br.edu.ufape.roomie.model.Property;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.projection.PropertyRankingView;
 import br.edu.ufape.roomie.repository.PropertyRepository;
 import br.edu.ufape.roomie.service.PropertyService;
 import jakarta.validation.Valid;
@@ -76,6 +77,11 @@ public class PropertyController {
         return propertyRepository.findDetailById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<PropertyRankingView>> getRanking() {
+        return ResponseEntity.ok(propertyRepository.findAllRanking());
     }
 
     @GetMapping("/meus")

@@ -1,0 +1,182 @@
+:host {
+  display: block;
+  font-family: 'Raleway', sans-serif;
+  background: #f6f5f7;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* ── Cabeçalho ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-icon {
+  font-size: 42px;
+  color: #0D83D7;
+}
+
+.page-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* ── Abas ── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Raleway', sans-serif;
+  color: #666;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn .material-icons { font-size: 18px; }
+
+.tab-btn:hover { color: #0D83D7; }
+
+.tab-btn.active {
+  color: #0D83D7;
+  border-bottom-color: #0D83D7;
+}
+
+/* ── Tabela ── */
+.table-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.report-table thead tr {
+  background: #f0f4f8;
+}
+
+.report-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: #444;
+  white-space: nowrap;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.report-table td {
+  padding: 11px 14px;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.report-table tbody tr:last-child td { border-bottom: none; }
+
+.report-table tbody tr:hover { background: #f7fbff; }
+
+.rank-col  { font-weight: 700; color: #0D83D7; width: 36px; }
+.title-col { font-weight: 600; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.price-col { white-space: nowrap; font-weight: 600; color: #0a6ab5; }
+.center-col { text-align: center; }
+.stars-col { white-space: nowrap; }
+
+.stars { color: #f5a623; letter-spacing: 1px; }
+.no-data { color: #bbb; }
+
+/* ── Badges de status ── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-active  { background: #e8f5e9; color: #2e7d32; }
+.badge-draft   { background: #f5f5f5; color: #757575; }
+.badge-rented  { background: #fff3e0; color: #e65100; }
+
+/* ── Chips ── */
+.chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chip-blue  { background: #e3f2fd; color: #0a6ab5; }
+.chip-green { background: #e8f5e9; color: #2e7d32; }
+
+/* ── Estados de loading / vazio ── */
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 40px;
+  color: #888;
+  font-size: 14px;
+}
+
+.spin { animation: spin 1s linear infinite; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 14px;
+}
+
+.empty-icon { font-size: 48px; color: #ccc; }
