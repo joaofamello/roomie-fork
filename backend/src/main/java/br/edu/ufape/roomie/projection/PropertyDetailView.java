@@ -23,7 +23,7 @@ public interface PropertyDetailView {
 
     String getRua();
 
-    Integer getNumEndereco();
+    String getNumEndereco();
 
     String getBairro();
 

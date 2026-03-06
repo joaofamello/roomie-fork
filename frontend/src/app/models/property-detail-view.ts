@@ -10,7 +10,7 @@ export interface PropertyDetailView {
   vagasDisponiveis: number;
   status: string;
   rua: string;
-  numEndereco: number;
+  numEndereco: string;
   bairro: string;
   cidade: string;
   estado: string;

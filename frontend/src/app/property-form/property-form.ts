@@ -82,7 +82,7 @@ export class PropertyFormComponent implements OnInit {
           gender: property.generoMoradores,
           address: {
             street: property.rua,
-            number: property.numEndereco?.toString(),
+            number: property.numEndereco,
             district: property.bairro,
             city: property.cidade,
             state: property.estado,

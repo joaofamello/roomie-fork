@@ -9,12 +9,14 @@ import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.repository.InterestRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterestService {
@@ -35,7 +37,11 @@ public class InterestService {
         Interest interest = new Interest(student, property);
         interestRepository.save(interest);
 
-        notificationService.notifyOwnerAboutInterest(property.getOwner(), student, property);
+        try {
+            notificationService.notifyOwnerAboutInterest(property.getOwner(), student, property);
+        } catch (Exception e) {
+            log.warn("Falha ao criar notificação para o proprietário (interesse salvo com sucesso): {}", e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)
