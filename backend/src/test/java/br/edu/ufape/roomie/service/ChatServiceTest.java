@@ -174,7 +174,8 @@ class ChatServiceTest {
     @Test
     @DisplayName("Deve listar os chats do proprietário corretamente")
     void deveListarChatsDoPropietario() {
-        when(chatRepository.findByUser(owner)).thenReturn(List.of(chat));
+        when(chatRepository.findByUserId(owner.getId())).thenReturn(List.of(chat));
+        when(chatRepository.findByStudentId(owner.getId())).thenReturn(List.of());
         when(messageRepository.countByChatIdAndReadFalseAndSenderIdNot(anyLong(), anyLong()))
                 .thenReturn(2L);
 
@@ -188,7 +189,8 @@ class ChatServiceTest {
     @Test
     @DisplayName("Deve listar os chats do estudante corretamente")
     void deveListarChatsDosEstudante() {
-        when(chatRepository.findByStudent(student)).thenReturn(List.of(chat));
+        when(chatRepository.findByUserId(student.getId())).thenReturn(List.of());
+        when(chatRepository.findByStudentId(student.getId())).thenReturn(List.of(chat));
         when(messageRepository.countByChatIdAndReadFalseAndSenderIdNot(anyLong(), anyLong()))
                 .thenReturn(0L);
 

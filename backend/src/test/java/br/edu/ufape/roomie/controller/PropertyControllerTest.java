@@ -303,7 +303,9 @@ class PropertyControllerTest {
     @Test
     @DisplayName("Deve alterar para rascunho com sucesso e retornar 200 OK")
     void testaSetToDraftComSucesso() throws Exception {
-        when(propertyService.setPropertyToDraft(1L)).thenReturn(new Property());
+        Property property = new Property();
+        property.setId(1L);
+        when(propertyService.setPropertyToDraft(1L)).thenReturn(property);
 
         var response = mvc.perform(patch("/api/properties/1/draft")).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -348,7 +350,9 @@ class PropertyControllerTest {
                 dtoJson.getBytes(StandardCharsets.UTF_8)
         );
 
-        when(propertyService.updateProperty(eq(1L), any(), any())).thenReturn(new Property());
+        Property updatedProperty = new Property();
+        updatedProperty.setId(1L);
+        when(propertyService.updateProperty(eq(1L), any(), any())).thenReturn(updatedProperty);
 
         MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/api/properties/1");
         builder.with(request -> {
