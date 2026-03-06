@@ -76,8 +76,7 @@ export class PropertyDetailPageComponent implements OnInit {
           },
         });
       },
-      error: (err) => {
-        console.error('Erro ao carregar detalhes do imóvel:', err);
+      error: () => {
         this.errorMessage = 'Não foi possível carregar os detalhes deste imóvel.';
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -156,13 +155,11 @@ export class PropertyDetailPageComponent implements OnInit {
         this.interesseEnviado = true;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: { status: number }) => {
         if (err.status === 409) {
           // Já havia demonstrado interesse — refletir no UI
           this.interesseEnviado = true;
           this.cdr.detectChanges();
-        } else {
-          console.error('Erro ao registrar interesse no servidor:', err);
         }
       },
     });

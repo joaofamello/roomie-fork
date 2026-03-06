@@ -43,8 +43,7 @@ export class ChatListComponent implements OnInit {
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erro ao carregar chats', err);
+      error: () => {
         this.isLoading = false;
         this.cdr.detectChanges();
       }

@@ -4,11 +4,20 @@ import br.edu.ufape.roomie.dto.ChatRequestDTO;
 import br.edu.ufape.roomie.dto.ChatResponseDTO;
 import br.edu.ufape.roomie.dto.MessageRequestDTO;
 import br.edu.ufape.roomie.dto.MessageResponseDTO;
-import br.edu.ufape.roomie.model.*;
-import br.edu.ufape.roomie.repository.*;
+import br.edu.ufape.roomie.model.Chat;
+import br.edu.ufape.roomie.model.Message;
+import br.edu.ufape.roomie.model.Property;
+import br.edu.ufape.roomie.model.Student;
+import br.edu.ufape.roomie.model.User;
+import br.edu.ufape.roomie.repository.ChatRepository;
+import br.edu.ufape.roomie.repository.MessageRepository;
+import br.edu.ufape.roomie.repository.PropertyRepository;
+import br.edu.ufape.roomie.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,10 +39,10 @@ public class ChatService {
     @Transactional
     public ChatResponseDTO startChat(ChatRequestDTO request, User owner) {
         Student student = studentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Estudante não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estudante não encontrado."));
 
         Property property = propertyRepository.findById(request.getPropertyId())
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
 
         if (!property.getOwner().getId().equals(owner.getId())) {
             throw new IllegalStateException("Apenas o proprietário do imóvel pode iniciar um chat.");
@@ -119,7 +128,7 @@ public class ChatService {
 
     private Chat findAndValidate(Long chatId, User user) {
         Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat não encontrado."));
 
         boolean isOwner = chat.getUser().getId().equals(user.getId());
         boolean isStudent = chat.getStudent().getId().equals(user.getId());
@@ -158,4 +167,3 @@ public class ChatService {
         );
     }
 }
-

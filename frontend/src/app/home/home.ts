@@ -16,7 +16,7 @@ import {HeaderComponent} from '../components/shared/header/header.component';
 export class Home implements OnInit {
   hasSearched: boolean = false;
   appliedLocation: string = '';
-  properties: any[] = [];
+  properties: unknown[] = [];
   isLoading: boolean = false;
   showMobileFilters: boolean = false;
   initialSearch = new FormControl('');
@@ -56,7 +56,7 @@ export class Home implements OnInit {
     const formValues = this.filterForm.value;
     this.appliedLocation = formValues.location;
 
-    const cleanParams: any = {};
+    const cleanParams: Record<string, string> = {};
     Object.keys(formValues).forEach(key => {
       if (formValues[key] !== null && formValues[key] !== '') {
         cleanParams[key] = formValues[key];
@@ -66,13 +66,12 @@ export class Home implements OnInit {
     if (!silent) this.isLoading = true;
 
     this.propertyService.buscarComFiltros(cleanParams).subscribe({
-      next: (resultados: any) => {
+      next: (resultados: unknown[]) => {
         this.properties = resultados;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erro ao buscar imóveis:', err);
+      error: () => {
         this.isLoading = false;
         this.cdr.detectChanges();
       }

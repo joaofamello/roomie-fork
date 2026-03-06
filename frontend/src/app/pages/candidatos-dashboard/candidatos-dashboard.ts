@@ -177,7 +177,7 @@ export class CandidatosDashboardComponent implements OnInit {
         }
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
+      error: (err: { message?: string }) => {
         this.toast.error(err?.message ?? 'Não foi possível atualizar o status do candidato.');
         this.cdr.detectChanges();
       }

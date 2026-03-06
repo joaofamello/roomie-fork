@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PropertyType} from '../models/property-type.enum';
+import {PropertyPhoto} from '../models/property';
 import {PropertyService} from '../services/propertyService';
 import {HeaderComponent} from '../components/shared/header/header.component';
 import {environment} from '../../enviroments/enviroment';
@@ -91,8 +92,7 @@ export class PropertyFormComponent implements OnInit {
         });
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erro ao carregar imóvel:', err);
+      error: () => {
         this.toast.error('Erro ao carregar dados do imóvel.');
       }
     });
@@ -100,7 +100,7 @@ export class PropertyFormComponent implements OnInit {
     this.propertyService.getById(id).subscribe({
       next: (property) => {
         if (property.photos && property.photos.length > 0) {
-          this.existingPhotos = property.photos.map((p: any) => ({
+          this.existingPhotos = property.photos.map((p: PropertyPhoto) => ({
             id: p.id,
             url: p.path.startsWith('http') ? p.path : this.apiBase + p.path
           }));
@@ -108,9 +108,7 @@ export class PropertyFormComponent implements OnInit {
           this.cdr.detectChanges();
         }
       },
-      error: (err) => {
-        console.error('Erro ao carregar fotos:', err);
-      }
+      error: () => { /* photos load is non-critical */ }
     });
   }
 
@@ -123,16 +121,19 @@ export class PropertyFormComponent implements OnInit {
     this.showImageUpload = !this.showImageUpload;
   }
 
-  onFileSelected(event: any): void {
-    const files = event.target.files;
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
     if (files && files.length > 0) {
-      for (const file of files) {
+      for (const file of Array.from(files)) {
         this.selectedFiles.push(file);
 
         const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.imagePreviews.push(e.target.result);
-          this.cdr.detectChanges();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target?.result) {
+            this.imagePreviews.push(e.target.result as string);
+            this.cdr.detectChanges();
+          }
         };
         reader.readAsDataURL(file);
       }
@@ -167,8 +168,7 @@ export class PropertyFormComponent implements OnInit {
             this.toast.success('Imóvel atualizado com sucesso!');
             setTimeout(() => this.router.navigate(['/meus-imoveis']), 1500);
           },
-          error: (err) => {
-            console.error('Erro ao atualizar imóvel:', err);
+          error: () => {
             this.submitError = 'Erro ao atualizar o imóvel. Tente novamente mais tarde.';
             this.submitSuccess = false;
             this.isSubmitting = false;
@@ -184,8 +184,7 @@ export class PropertyFormComponent implements OnInit {
             this.toast.success('Imóvel cadastrado com sucesso!');
             setTimeout(() => this.router.navigate(['/meus-imoveis']), 1500);
           },
-          error: (err) => {
-            console.error('Erro ao salvar imóvel:', err);
+          error: () => {
             this.submitError = 'Erro ao cadastrar o imóvel. Tente novamente mais tarde.';
             this.submitSuccess = false;
             this.isSubmitting = false;

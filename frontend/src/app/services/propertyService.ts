@@ -21,7 +21,7 @@ export class PropertyService {
     return this.http.get<Property[]>(this.apiUrl);
   }
 
-  createProperty(propertyData: any): Observable<{ id: number }> {
+  createProperty(propertyData: FormData): Observable<{ id: number }> {
     return this.http.post<{ id: number }>(this.apiUrl, propertyData);
   }
 
@@ -29,24 +29,24 @@ export class PropertyService {
     return this.http.get<PropertyDetailView[]>(`${this.apiUrl}/meus`);
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<Property> {
+    return this.http.get<Property>(`${this.apiUrl}/${id}`);
   }
 
-  publishProperty(id: number): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/publish`, {});
+  publishProperty(id: number): Observable<{ id: number; status: string }> {
+    return this.http.patch<{ id: number; status: string }>(`${this.apiUrl}/${id}/publish`, {});
   }
 
-  setDraft(id: number): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/draft`, {});
+  setDraft(id: number): Observable<{ id: number }> {
+    return this.http.patch<{ id: number }>(`${this.apiUrl}/${id}/draft`, {});
   }
 
-  deleteProperty(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteProperty(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  updateProperty(id: number, formData: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, formData);
+  updateProperty(id: number, formData: FormData): Observable<{ id: number }> {
+    return this.http.put<{ id: number }>(`${this.apiUrl}/${id}`, formData);
   }
 
   getAllDetails(): Observable<PropertyDetailView[]> {

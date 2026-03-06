@@ -9,8 +9,10 @@ import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.repository.ChatRepository;
 import br.edu.ufape.roomie.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +27,7 @@ public class ContractService {
     @Transactional
     public ContractResponseDTO createContract(ContractRequestDTO request, User owner) {
         Chat chat = chatRepository.findById(request.getChatId())
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat não encontrado."));
 
         if (!chat.getUser().getId().equals(owner.getId())) {
             throw new IllegalStateException("Apenas o proprietário do imóvel pode enviar uma proposta de contrato.");
@@ -48,7 +50,7 @@ public class ContractService {
     @Transactional
     public ContractResponseDTO acceptContract(Long contractId, User student) {
         Contract contract = contractRepository.findById(contractId)
-                .orElseThrow(() -> new RuntimeException("Contrato não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Contrato não encontrado."));
 
         if (!contract.getStudent().getId().equals(student.getId())) {
             throw new IllegalStateException("Apenas o estudante destinatário pode aceitar o contrato.");
@@ -66,7 +68,7 @@ public class ContractService {
     @Transactional
     public ContractResponseDTO rejectContract(Long contractId, User student) {
         Contract contract = contractRepository.findById(contractId)
-                .orElseThrow(() -> new RuntimeException("Contrato não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Contrato não encontrado."));
 
         if (!contract.getStudent().getId().equals(student.getId())) {
             throw new IllegalStateException("Apenas o estudante destinatário pode recusar o contrato.");
@@ -84,7 +86,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<ContractResponseDTO> getContractsByChat(Long chatId, User user) {
         Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chat não encontrado."));
 
         boolean isOwner = chat.getUser().getId().equals(user.getId());
         boolean isStudent = chat.getStudent().getId().equals(user.getId());

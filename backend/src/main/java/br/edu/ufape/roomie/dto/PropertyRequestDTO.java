@@ -3,7 +3,11 @@ package br.edu.ufape.roomie.dto;
 import br.edu.ufape.roomie.enums.PropertyType;
 import br.edu.ufape.roomie.enums.UserGender;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;

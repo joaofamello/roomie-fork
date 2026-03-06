@@ -22,20 +22,25 @@ public class FileStorageService {
 
         try {
             Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new RuntimeException("Não foi possível criar o diretório onde os arquivos serão armazenados.", ex);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Não foi possível criar o diretório onde os arquivos serão armazenados.", ex);
         }
     }
 
     public String storeFile(MultipartFile file) {
-        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String rawFileName = file.getOriginalFilename();
+        if (rawFileName == null || rawFileName.isBlank()) {
+            throw new IllegalArgumentException("Nome do arquivo inválido.");
+        }
+
+        String originalFileName = StringUtils.cleanPath(rawFileName);
 
         try {
             if (originalFileName.contains("..")) {
-                throw new RuntimeException("Desculpe! O nome do arquivo contém um caminho inválido " + originalFileName);
+                throw new IllegalArgumentException("Desculpe! O nome do arquivo contém um caminho inválido " + originalFileName);
             }
 
-            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.'));
             String newFileName = UUID.randomUUID().toString() + fileExtension;
 
             Path targetLocation = this.fileStorageLocation.resolve(newFileName);
@@ -45,7 +50,7 @@ public class FileStorageService {
             return newFileName;
 
         } catch (IOException ex) {
-            throw new RuntimeException("Não foi possível armazenar o arquivo " + originalFileName + ". Por favor, tente novamente!", ex);
+            throw new IllegalStateException("Não foi possível armazenar o arquivo " + originalFileName + ". Por favor, tente novamente!", ex);
         }
     }
 }

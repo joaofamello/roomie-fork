@@ -81,8 +81,7 @@ export class Login {
       try {
         await firstValueFrom(this.auth.login(this.loginForm.value));
         await this.router.navigate(['/home']);
-      } catch (error) {
-        console.error(error);
+      } catch {
         this.toast.error('Falha no login! Verifique suas credenciais.');
       }
     } else {
@@ -109,9 +108,9 @@ export class Login {
         this.toast.success('Cadastro realizado com sucesso! Faça login.');
         this.togglePanel();
         this.registerForm.reset();
-      } catch (error: any) {
-        console.error(error);
-        const msg = error?.error?.message || 'Erro ao realizar cadastro.';
+      } catch (error: unknown) {
+        const err = error as { error?: { message?: string } };
+        const msg = err?.error?.message || 'Erro ao realizar cadastro.';
         this.toast.error(msg);
       }
     } else {

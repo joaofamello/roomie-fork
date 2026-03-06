@@ -3,9 +3,10 @@ package br.edu.ufape.roomie.service;
 import br.edu.ufape.roomie.dto.UserDTO;
 import br.edu.ufape.roomie.dto.UserResponseDTO;
 import br.edu.ufape.roomie.enums.UserRole;
+import br.edu.ufape.roomie.model.Telefone;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,16 +15,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.stream.Collectors;
-
 @Service
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -68,8 +65,8 @@ public class AuthService implements UserDetailsService {
 
         if (savedUser.getTelefones() != null) {
             response.setPhones(savedUser.getTelefones().stream()
-                    .map(telefone -> telefone.getNumero())
-                    .collect(Collectors.toList()));
+                    .map(Telefone::getNumero)
+                    .toList());
         }
 
         return response;

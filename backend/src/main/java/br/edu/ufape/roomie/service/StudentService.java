@@ -1,6 +1,6 @@
 package br.edu.ufape.roomie.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,13 +10,11 @@ import br.edu.ufape.roomie.repository.StudentRepository;
 import br.edu.ufape.roomie.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void promoteUserToStudent(Long userId, String major, String institution) {

@@ -9,7 +9,7 @@ export class PropertyService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/api/properties`;
 
-  buscarComFiltros(filtros: any) {
+  buscarComFiltros(filtros: Record<string, string>) {
     let params = new HttpParams();
 
     Object.keys(filtros).forEach(key => {

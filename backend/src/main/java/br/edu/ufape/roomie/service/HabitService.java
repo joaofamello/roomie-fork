@@ -3,7 +3,11 @@ package br.edu.ufape.roomie.service;
 import br.edu.ufape.roomie.dto.HabitRequestDTO;
 import br.edu.ufape.roomie.dto.HabitResponseDTO;
 import br.edu.ufape.roomie.enums.StudySchedule;
-import br.edu.ufape.roomie.model.*;
+import br.edu.ufape.roomie.model.CleaningPrefs;
+import br.edu.ufape.roomie.model.Habit;
+import br.edu.ufape.roomie.model.Hobby;
+import br.edu.ufape.roomie.model.LifeStyle;
+import br.edu.ufape.roomie.model.Student;
 import br.edu.ufape.roomie.repository.HabitRepository;
 import br.edu.ufape.roomie.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -105,9 +108,9 @@ public class HabitService {
         return new HabitResponseDTO(
                 habit.getIdHabit(),
                 habit.getStudySchedule() != null ? habit.getStudySchedule().name() : null,
-                habit.getHobbies().stream().map(Hobby::getHobby).collect(Collectors.toList()),
-                habit.getLifeStyles().stream().map(LifeStyle::getStyle).collect(Collectors.toList()),
-                habit.getCleaningPrefs().stream().map(CleaningPrefs::getPref).collect(Collectors.toList())
+                habit.getHobbies().stream().map(Hobby::getHobby).toList(),
+                habit.getLifeStyles().stream().map(LifeStyle::getStyle).toList(),
+                habit.getCleaningPrefs().stream().map(CleaningPrefs::getPref).toList()
         );
     }
 }

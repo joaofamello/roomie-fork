@@ -10,8 +10,10 @@ import br.edu.ufape.roomie.repository.InterestRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class InterestService {
     @Transactional
     public void registerInterest(Long propertyId, Student student) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
 
         if (interestRepository.existsByStudentAndProperty(student, property)) {
             throw new IllegalStateException("Você já demonstrou interesse neste imóvel.");
@@ -47,7 +49,7 @@ public class InterestService {
     @Transactional(readOnly = true)
     public List<InterestSummaryDTO> listInterestsForProperty(Long propertyId, User loggedInOwner) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
 
         if (!property.getOwner().getId().equals(loggedInOwner.getId())) {
             throw new IllegalStateException("Acesso negado: Apenas o proprietário pode visualizar os interessados.");
@@ -70,14 +72,14 @@ public class InterestService {
     @Transactional(readOnly = true)
     public boolean hasInterest(Long propertyId, Student student) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
         return interestRepository.existsByStudentAndProperty(student, property);
     }
 
     @Transactional
     public void updateInterestStatus(Long interestId, InterestStatus newStatus, User loggedInOwner) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new RuntimeException("Interesse não encontrado."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Interesse não encontrado."));
 
         if (!interest.getProperty().getOwner().getId().equals(loggedInOwner.getId())) {
             throw new IllegalStateException("Acesso negado: Apenas o proprietário pode alterar o status da proposta.");

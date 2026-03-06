@@ -5,6 +5,14 @@ import {jwtDecode} from 'jwt-decode';
 import {LoginResponse, RegisterData, User, UserRole} from './user.interface';
 import {environment} from '../../enviroments/enviroment';
 
+interface JwtPayloadCustom {
+  id: number;
+  sub: string;
+  name: string;
+  role: string;
+  exp?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -48,7 +56,7 @@ export class Auth {
     if (!token) return false;
 
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode<JwtPayloadCustom>(token);
       const currentTime = Date.now() / 1000;
 
       if (decoded.exp && decoded.exp < currentTime) {
@@ -57,8 +65,7 @@ export class Auth {
       }
 
       return true;
-    } catch (e) {
-      console.error(e);
+    } catch {
       this.logout();
       return false;
     }
@@ -90,9 +97,9 @@ export class Auth {
     }
   }
 
-  private setUserState(token: string) {
+  private setUserState(token: string): void {
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode<JwtPayloadCustom>(token);
 
       this.currentUserSubject.next({
         id: decoded.id,
@@ -100,8 +107,7 @@ export class Auth {
         name: decoded.name || 'Usuário',
         role: decoded.role as UserRole
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
       this.logout();
     }
   }

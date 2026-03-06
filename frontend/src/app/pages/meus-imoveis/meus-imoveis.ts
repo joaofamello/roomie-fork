@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { PropertyService } from '../../services/propertyService';
 import { UserService } from '../../services/user.service';
 import { InterestService } from '../../services/interest.service';
@@ -62,8 +63,7 @@ export class MeusImoveis implements OnInit {
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erro ao buscar imóveis', err);
+      error: () => {
         this.toast.error('Erro ao carregar seus imóveis.');
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -108,8 +108,7 @@ export class MeusImoveis implements OnInit {
           this.ownerReport = reports.find(r => r.idProprietario === currentUser.id) ?? null;
           this.cdr.detectChanges();
         },
-        error: (err: any) => {
-          console.error('Erro ao buscar relatório', err);
+        error: () => {
           this.cdr.detectChanges();
         }
       });
@@ -124,8 +123,7 @@ export class MeusImoveis implements OnInit {
         this.loadOwnerReport();
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erro ao publicar', err);
+      error: () => {
         this.toast.error('Erro ao publicar o imóvel.');
         this.cdr.detectChanges();
       }
@@ -137,8 +135,7 @@ export class MeusImoveis implements OnInit {
       next: () => {
         this.router.navigate(['/properties', id, 'edit']);
       },
-      error: (err: any) => {
-        console.error('Erro ao definir como rascunho', err);
+      error: () => {
         // Navigate to edit even if already draft
         this.router.navigate(['/properties', id, 'edit']);
       }
@@ -164,8 +161,7 @@ export class MeusImoveis implements OnInit {
         this.loadOwnerReport();
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erro ao excluir imóvel', err);
+      error: () => {
         this.toast.error('Erro ao excluir o imóvel.');
         this.cdr.detectChanges();
       }
@@ -205,8 +201,7 @@ export class MeusImoveis implements OnInit {
         this.isLoadingInterests = false;
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erro ao carregar candidatos', err);
+      error: (err: HttpErrorResponse) => {
         this.toast.error(err?.message ?? 'Erro ao carregar candidatos.');
         this.isLoadingInterests = false;
         this.expandedInterestsPropertyId = null;
@@ -226,13 +221,11 @@ export class MeusImoveis implements OnInit {
       next: (_message: string) => {
         const label = status === InterestStatus.ACCEPTED ? 'aceito' : 'recusado';
         this.toast.success(`Candidato ${label} com sucesso!`);
-        // Recarrega a lista atualizada do servidor
         this.interestsMap.delete(propertyId);
         this.loadInterests(propertyId);
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Erro ao atualizar status do candidato', err);
+      error: (err: HttpErrorResponse) => {
         this.toast.error(err?.message ?? 'Não foi possível atualizar o status do candidato.');
         this.cdr.detectChanges();
       }
@@ -272,8 +265,7 @@ export class MeusImoveis implements OnInit {
       next: (chat) => {
         this.chatWidgetService.openChat(chat.id);
       },
-      error: (err: any) => {
-        console.error('Erro ao iniciar chat', err);
+      error: () => {
         this.toast.error('Não foi possível iniciar a conversa.');
       }
     });
