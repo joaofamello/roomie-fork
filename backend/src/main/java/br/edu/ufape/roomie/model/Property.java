@@ -83,4 +83,8 @@ public class Property {
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contract> contracts = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "id_estudante_confirmado")
+    private Student confirmedStudent;
 }

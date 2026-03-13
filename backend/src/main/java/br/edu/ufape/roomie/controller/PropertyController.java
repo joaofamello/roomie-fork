@@ -160,4 +160,22 @@ public class PropertyController {
         return ResponseEntity.ok(Map.of("id", updated.getId()));
     }
 
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<Map<String, Object>> confirmStudent(
+            @PathVariable Long id,
+            @RequestParam Long studentId) {
+        try {
+            Property property = propertyService.confirmStudent(id, studentId);
+            return ResponseEntity.ok(Map.of(
+                    "id", property.getId(),
+                    "status", property.getStatus().name(),
+                    "confirmedStudentId", property.getConfirmedStudent().getId(),
+                    "message", "Estudante confirmado com sucesso na moradia."
+            ));
+        } catch (ResponseStatusException e) {
+            assert e.getReason() != null;
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+        }
+    }
+
 }

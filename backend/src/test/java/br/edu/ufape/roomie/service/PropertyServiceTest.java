@@ -10,8 +10,10 @@ import br.edu.ufape.roomie.model.Address;
 import br.edu.ufape.roomie.model.Property;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.repository.InterestRepository;
 import br.edu.ufape.roomie.repository.PropertyPhotoRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
+import br.edu.ufape.roomie.repository.StudentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +50,12 @@ class PropertyServiceTest {
 
     @Mock
     private FileStorageService fileStorageService;
+
+    @Mock
+    private StudentRepository studentRepository;
+
+    @Mock
+    private InterestRepository interestRepository;
 
     @InjectMocks
     private PropertyService propertyService;
@@ -361,4 +369,73 @@ class PropertyServiceTest {
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         assertEquals("Usuário não autenticado.", exception.getReason());
     }
+
+    @Test
+    @DisplayName("Deve confirmar um estudante em uma moradia com sucesso")
+    void shouldConfirmStudentSuccessfully() {
+        authenticateUser(mockOwner);
+
+        Property property = new Property();
+        property.setId(10L);
+        property.setOwner(mockOwner);
+        property.setStatus(PropertyStatus.ACTIVE);
+
+        br.edu.ufape.roomie.model.Student student = new br.edu.ufape.roomie.model.Student();
+        student.setId(5L);
+
+        when(propertyRepository.findById(10L)).thenReturn(Optional.of(property));
+        when(studentRepository.findById(5L)).thenReturn(Optional.of(student));
+        when(interestRepository.existsByStudentAndProperty(student, property)).thenReturn(true);
+        when(propertyRepository.save(any(Property.class))).thenAnswer(i -> i.getArgument(0));
+
+        Property result = propertyService.confirmStudent(10L, 5L);
+
+        assertEquals(PropertyStatus.RENTED, result.getStatus());
+        assertEquals(student, result.getConfirmedStudent());
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro 400 se o estudante não for um candidato")
+    void shouldThrowBadRequestWhenStudentIsNotInterested() {
+        authenticateUser(mockOwner);
+
+        Property property = new Property();
+        property.setId(10L);
+        property.setOwner(mockOwner);
+
+        br.edu.ufape.roomie.model.Student student = new br.edu.ufape.roomie.model.Student();
+        student.setId(5L);
+
+        when(propertyRepository.findById(10L)).thenReturn(Optional.of(property));
+        when(studentRepository.findById(5L)).thenReturn(Optional.of(student));
+        when(interestRepository.existsByStudentAndProperty(student, property)).thenReturn(false);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            propertyService.confirmStudent(10L, 5L);
+        });
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("O estudante selecionado não está na lista de candidatos desta moradia.", exception.getReason());
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro 403 se outro dono tentar confirmar a vaga")
+    void shouldThrowForbiddenWhenNotOwnerTriesToConfirm() {
+        User impostor = new User();
+        impostor.setId(99L);
+        authenticateUser(impostor);
+
+        Property property = new Property();
+        property.setId(10L);
+        property.setOwner(mockOwner);
+
+        when(propertyRepository.findById(10L)).thenReturn(Optional.of(property));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            propertyService.confirmStudent(10L, 5L);
+        });
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+    }
+
 }

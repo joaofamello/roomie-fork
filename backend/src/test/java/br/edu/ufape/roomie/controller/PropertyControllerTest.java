@@ -365,4 +365,28 @@ class PropertyControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
+
+    @Test
+    @DisplayName("Deve retornar 200 OK ao confirmar um estudante na moradia")
+    @WithMockUser
+    void testaConfirmStudentComSucesso() throws Exception {
+        Property property = new Property();
+        property.setId(1L);
+        property.setStatus(PropertyStatus.RENTED);
+
+        br.edu.ufape.roomie.model.Student student = new br.edu.ufape.roomie.model.Student();
+        student.setId(5L);
+        property.setConfirmedStudent(student);
+
+        when(propertyService.confirmStudent(1L, 5L)).thenReturn(property);
+
+        var response = mvc.perform(patch("/api/properties/1/confirm")
+                        .param("studentId", "5"))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).contains("\"status\":\"RENTED\"");
+        assertThat(response.getContentAsString()).contains("\"confirmedStudentId\":5");
+    }
+
 }

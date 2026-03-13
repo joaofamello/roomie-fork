@@ -3,13 +3,12 @@ package br.edu.ufape.roomie.service;
 import br.edu.ufape.roomie.dto.PropertyRequestDTO;
 import br.edu.ufape.roomie.dto.PropertyResponseDTO;
 import br.edu.ufape.roomie.enums.PropertyStatus;
-import br.edu.ufape.roomie.model.Address;
-import br.edu.ufape.roomie.model.Property;
-import br.edu.ufape.roomie.model.PropertyPhoto;
-import br.edu.ufape.roomie.model.User;
+import br.edu.ufape.roomie.model.*;
 import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.repository.InterestRepository;
 import br.edu.ufape.roomie.repository.PropertyPhotoRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
+import br.edu.ufape.roomie.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +25,19 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final FileStorageService fileStorageService;
-        private final PropertyPhotoRepository propertyPhotoRepository;
+    private final PropertyPhotoRepository propertyPhotoRepository;
+    private final StudentRepository studentRepository; // Nova dependência
+    private final InterestRepository interestRepository;
 
-    public PropertyService(PropertyRepository propertyRepository, FileStorageService fileStorageService, PropertyPhotoRepository propertyPhotoRepository) {
+    public PropertyService(PropertyRepository propertyRepository, FileStorageService fileStorageService,
+                           PropertyPhotoRepository propertyPhotoRepository,
+                           StudentRepository studentRepository,
+                           InterestRepository interestRepository) {
         this.propertyRepository = propertyRepository;
         this.fileStorageService = fileStorageService;
         this.propertyPhotoRepository = propertyPhotoRepository;
+        this.studentRepository = studentRepository;
+        this.interestRepository = interestRepository;
     }
 
     @Transactional
@@ -180,17 +186,42 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public PropertyResponseDTO getPropertyDetails(Long id){
+    public PropertyResponseDTO getPropertyDetails(Long id) {
         getAuthenticatedUser();
 
         PropertyDetailView details = propertyRepository.findDetailById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
-        
-        if(!"ACTIVE".equals(details.getStatus())){
+
+        if (!"ACTIVE".equals(details.getStatus())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Anúncio não está disponivel");
         }
         List<String> photos = propertyPhotoRepository.findPhotosByPropertyId(id);
 
         return new PropertyResponseDTO(details, photos);
+    }
+
+    @Transactional
+    public Property confirmStudent(Long propertyId, Long studentId) {
+        User user = getAuthenticatedUser();
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+
+        if (!property.getOwner().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para gerenciar este imóvel.");
+        }
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estudante não encontrado."));
+
+        boolean isInterested = interestRepository.existsByStudentAndProperty(student, property);
+        if (!isInterested) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O estudante selecionado não está na lista de candidatos desta moradia.");
+        }
+
+        property.setStatus(PropertyStatus.RENTED);
+        property.setConfirmedStudent(student);
+
+        return propertyRepository.save(property);
     }
 
 }
