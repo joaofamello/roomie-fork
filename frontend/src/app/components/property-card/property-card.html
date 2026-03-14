@@ -1,4 +1,4 @@
-<a [routerLink]="['/details', property.id]" class="card" [attr.aria-label]="property.title">
+<a [routerLink]="['/details', propertyId]" class="card" [attr.aria-label]="propertyTitle">
   <div class="card-image-wrapper">
     <img
       *ngIf="firstPhotoUrl; else noPhoto"
@@ -12,23 +12,20 @@
   </div>
 
   <div class="card-body">
-    <h3>{{ property.title }}</h3>
+    <h3>{{ propertyTitle }}</h3>
 
-    <p class="price">R$ {{ property.price | number: '1.0-0' }}</p>
+    <p class="price">R$ {{ propertyPrice | number: '1.0-0' }}</p>
 
-    <p *ngIf="property.address" class="neighborhood">
-      {{ property.address.district }}, {{ property.address.city }}
-    </p>
-    <p *ngIf="!property.address && property.neighborhood" class="neighborhood">
-      {{ property.neighborhood }}
+    <p *ngIf="propertyDistrict || propertyCity" class="neighborhood">
+      {{ propertyDistrict }}<span *ngIf="propertyDistrict && propertyCity">, </span>{{ propertyCity }}
     </p>
 
     <div class="card-tags">
-      <span *ngIf="property.availableVacancies" class="tag">
-        {{ property.availableVacancies }} vaga{{ property.availableVacancies > 1 ? 's' : '' }}
+      <span *ngIf="propertyVacancies > 0" class="tag">
+        {{ propertyVacancies }} vaga{{ propertyVacancies > 1 ? 's' : '' }}
       </span>
-      <span *ngIf="property.acceptAnimals" class="tag">Aceita animais</span>
-      <span *ngIf="property.hasGarage" class="tag">Garagem</span>
+      <span *ngIf="propertyAcceptsAnimals" class="tag">Aceita animais</span>
+      <span *ngIf="propertyHasGarage" class="tag">Garagem</span>
     </div>
   </div>
 </a>
