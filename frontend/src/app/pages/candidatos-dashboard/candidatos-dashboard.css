@@ -448,7 +448,8 @@
 
 .btn-accept,
 .btn-reject,
-.btn-contact {
+.btn-contact,
+.btn-confirm {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -464,7 +465,8 @@
 
 .btn-accept:hover,
 .btn-reject:hover,
-.btn-contact:hover {
+.btn-contact:hover,
+.btn-confirm:hover {
   opacity: 0.8;
   transform: scale(1.08);
 }
@@ -472,10 +474,77 @@
 .btn-accept  { background: #d1e7dd; color: #155724; }
 .btn-reject  { background: #f8d7da; color: #721c24; }
 .btn-contact { background: #dce8f8; color: #0a6ab5; }
+.btn-confirm { background: #cce5ff; color: #004085; }
 
 .btn-accept .material-icons,
 .btn-reject .material-icons,
-.btn-contact .material-icons { font-size: 18px; }
+.btn-contact .material-icons,
+.btn-confirm .material-icons { font-size: 18px; }
+
+/* Modal de Confirmação */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.modal-content p {
+  margin-bottom: 24px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel {
+  background: #f1f1f1;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-cancel:hover { background: #e2e2e2; }
+
+.btn-confirm-action {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-confirm-action:hover { background: #0056b3; }
 
 /* ═══════════════════════════════════════════
    RESPONSIVIDADE

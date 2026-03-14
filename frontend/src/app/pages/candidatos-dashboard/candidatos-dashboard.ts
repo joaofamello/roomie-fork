@@ -40,6 +40,12 @@ export class CandidatosDashboardComponent implements OnInit {
   activeStatusFilter: StatusFilter = 'ALL';
   activePropertyId: number | 'ALL' = 'ALL';
 
+  /** Estado do Modal de Confirmação */
+  showConfirmModal = false;
+  selectedPropertyIdForConfirmation?: number;
+  selectedStudentIdForConfirmation?: number;
+  selectedStudentNameForConfirmation?: string;
+
   constructor(
     private readonly propertyService: PropertyService,
     private readonly interestService: InterestService,
@@ -229,4 +235,35 @@ export class CandidatosDashboardComponent implements OnInit {
     InterestStatus.ACCEPTED,
     InterestStatus.REJECTED,
   ];
+
+  // ── Modal de Confirmação de Vaga ──
+  openConfirmModal(propertyId: number, studentId: number, studentName: string): void {
+    this.selectedPropertyIdForConfirmation = propertyId;
+    this.selectedStudentIdForConfirmation = studentId;
+    this.selectedStudentNameForConfirmation = studentName;
+    this.showConfirmModal = true;
+  }
+
+  closeConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.selectedPropertyIdForConfirmation = undefined;
+    this.selectedStudentIdForConfirmation = undefined;
+    this.selectedStudentNameForConfirmation = undefined;
+  }
+
+  confirmStudentSelection(): void {
+    if (this.selectedPropertyIdForConfirmation === undefined || this.selectedStudentIdForConfirmation === undefined) return;
+
+    this.interestService.confirmAnnouncement(this.selectedPropertyIdForConfirmation, this.selectedStudentIdForConfirmation).subscribe({
+      next: () => {
+        this.toast.success(`Estudante ${this.selectedStudentNameForConfirmation} confirmado(a) para a vaga com sucesso!`);
+        this.closeConfirmModal();
+        this.loadAll(); // Atualiza toda a listagem (vaga agora como RENTED, etc.)
+      },
+      error: () => {
+        this.toast.error('Erro ao confirmar o estudante. Tente novamente mais tarde.');
+        this.closeConfirmModal();
+      }
+    });
+  }
 }

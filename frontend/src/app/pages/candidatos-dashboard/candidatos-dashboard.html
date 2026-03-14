@@ -170,13 +170,14 @@
                       (click)="startChatWithStudent(interest.studentId, group.property.idImovel)">
                       <span class="material-icons">chat</span>
                     </button>
-                    <a
-                      *ngIf="interest.studentEmail"
-                      class="btn-contact"
-                      [href]="'mailto:' + interest.studentEmail"
-                      title="Enviar e-mail">
-                      <span class="material-icons">mail</span>
-                    </a>
+
+                    <button
+                      *ngIf="interest.status === InterestStatus.ACCEPTED && group.property.status !== 'RENTED'"
+                      class="btn-confirm"
+                      title="Confirmar vaga para candidato"
+                      (click)="openConfirmModal(group.property.idImovel, interest.studentId, interest.studentName)">
+                      <span class="material-icons">how_to_reg</span>
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -188,5 +189,20 @@
 
     </ng-container>
   </ng-container>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="closeConfirmModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Confirmar Estudante</h3>
+      <p>
+        Tem certeza que deseja confirmar o(a) estudante <strong>{{ selectedStudentNameForConfirmation }}</strong> para esta vaga?
+      </p>
+      <p style="font-size: 0.9em; margin-bottom: 24px;">Esta ação registrará o estudante na vaga selecionada e pode alterar o status do imóvel para alugado caso as vagas se encerrem.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeConfirmModal()">Cancelar</button>
+        <button class="btn-confirm-action" (click)="confirmStudentSelection()">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
 </div>
