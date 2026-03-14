@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PropertyService } from '../../services/propertyService';
 import { StudentService } from '../../services/student.service';
@@ -39,6 +39,7 @@ export class RelatoriosComponent implements OnInit {
   readonly maxExpenseDate = new Date().toISOString().split('T')[0];
 
   constructor(
+    private readonly route: ActivatedRoute,
     private readonly fb: FormBuilder,
     private readonly propertyService: PropertyService,
     private readonly studentService: StudentService,
@@ -48,6 +49,12 @@ export class RelatoriosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'despesas') {
+        this.activeTab = 'despesas';
+      }
+    });
+
     this.initializeExpenseForm();
     this.loadRanking();
     this.loadEngajamento();

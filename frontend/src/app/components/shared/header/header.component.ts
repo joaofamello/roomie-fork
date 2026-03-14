@@ -198,6 +198,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate(['/habits']);
   }
 
+  goToDespesas(): void {
+    this.isMenuOpen = false;
+    this.router.navigate(['/relatorios'], { queryParams: { tab: 'despesas' } });
+  }
+
   goToRelatorios(): void {
     this.isMenuOpen = false;
     this.router.navigate(['/relatorios']);
