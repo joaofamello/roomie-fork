@@ -9,7 +9,7 @@ import { StudentEngagementView } from '../../models/student-engagement-view';
 import { HeaderComponent } from '../../components/shared/header/header.component';
 import { ToastService } from '../../services/toast.service';
 import { ExpenseService } from '../../services/expense.service';
-import { ExpenseRequest } from '../../models/expense.model';
+import { ExpenseRequest, ExpenseSummary } from '../../models/expense.model';
 import { PropertyDetailView } from '../../models/property-detail-view';
 
 type Tab = 'ranking' | 'engajamento' | 'despesas';
@@ -33,6 +33,10 @@ export class RelatoriosComponent implements OnInit {
   expenseForm!: FormGroup;
   myProperties: PropertyDetailView[] = [];
   isLoadingProperties = true;
+
+  expenseSummary: ExpenseSummary | null = null;
+  isLoadingSummary = false;
+
   isSubmittingExpense = false;
   expenseSubmitSuccess = '';
   expenseSubmitError = '';
@@ -72,11 +76,36 @@ export class RelatoriosComponent implements OnInit {
       amount: [null, [Validators.required, Validators.min(0.01)]],
       expenseDate: [this.maxExpenseDate, [Validators.required]],
     });
+
+    this.expenseForm.get('propertyId')?.valueChanges.subscribe((propertyId) => {
+      if (propertyId) {
+        this.loadExpenseSummary(propertyId);
+      } else {
+        this.expenseSummary = null;
+      }
+    });
+  }
+
+  loadExpenseSummary(propertyId: number): void {
+    this.isLoadingSummary = true;
+    this.expenseSummary = null;
+    this.expenseService.getExpensesByProperty(propertyId).subscribe({
+      next: (summary) => {
+        this.expenseSummary = summary;
+        this.isLoadingSummary = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoadingSummary = false;
+        this.toast.error('Erro ao carregar despesas da moradia.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   loadMyProperties(): void {
     this.isLoadingProperties = true;
-    this.propertyService.getMyProperties().subscribe({
+    this.propertyService.getMyResidentProperties().subscribe({
       next: (properties: PropertyDetailView[]) => {
         this.myProperties = properties;
         this.isLoadingProperties = false;
@@ -127,8 +156,11 @@ export class RelatoriosComponent implements OnInit {
         this.expenseSubmitSuccess = 'Despesa registrada com sucesso.';
         this.toast.success(this.expenseSubmitSuccess);
 
+        // Reload the summary
+        this.loadExpenseSummary(payload.propertyId);
+
         this.expenseForm.reset({
-          propertyId: null,
+          propertyId: payload.propertyId, // Keep the same property selected
           description: '',
           amount: null,
           expenseDate: this.maxExpenseDate,

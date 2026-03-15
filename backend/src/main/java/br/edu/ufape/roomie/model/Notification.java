@@ -1,5 +1,8 @@
 package br.edu.ufape.roomie.model;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,9 +13,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Table(name = "notificacao")
@@ -29,7 +29,7 @@ public class Notification {
     @JoinColumn(name = "id_destinatario", nullable = false)
     private User recipient;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "mensagem", nullable = false, length = 500)
     private String message;
 
     @Column(name = "lida", nullable = false)

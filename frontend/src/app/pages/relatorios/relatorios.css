@@ -182,13 +182,128 @@
 
 .empty-icon { font-size: 48px; color: #ccc; }
 
-/* ── Formulário de despesas ── */
-.expense-card {
+/* ── Formulário e Dashboard de despesas ── */
+.despesas-tab-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-box {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   padding: 24px;
 }
+
+.property-selector-card {
+  padding: 16px 24px;
+  margin-bottom: 20px;
+}
+
+.property-selector-form .form-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.property-selector-form label {
+  white-space: nowrap;
+}
+
+.property-selector-form select {
+  max-width: 400px;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dash-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.dash-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #fff3e0;
+  color: #fb8c00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-icon .material-icons {
+  font-size: 24px;
+}
+
+.dash-icon.bg-blue { background: #e3f2fd; color: #1e88e5; }
+.dash-icon.bg-green { background: #e8f5e9; color: #43a047; }
+
+.dash-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dash-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-top: 4px;
+}
+
+.expense-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 20px;
+}
+
+.history-section h3 {
+  margin: 0 0 16px;
+  color: #1a1a1a;
+  font-size: 18px;
+}
+
+.form-section {
+  align-self: start;
+}
+
+.empty-state-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 13px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.empty-icon-small { font-size: 36px; color: #ddd; }
+
+.right-align { text-align: right; }
+.date-col { width: 90px; color: #666; font-size: 12px; }
+.desc-col { font-weight: 500; }
+.w-full { width: 100%; min-width: 0; }
 
 .expense-header {
   margin-bottom: 20px;
@@ -197,18 +312,12 @@
 .expense-header h3 {
   margin: 0 0 6px;
   color: #1a1a1a;
-  font-size: 20px;
-}
-
-.expense-header p {
-  margin: 0;
-  color: #666;
-  font-size: 13px;
+  font-size: 18px;
 }
 
 .expense-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -325,6 +434,20 @@
   opacity: 0.72;
 }
 
+@media (max-width: 900px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  .expense-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .property-selector-form .form-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 760px) {
   .page-wrapper {
     padding: 24px 14px;
@@ -339,21 +462,7 @@
     font-size: 13px;
   }
 
-  .expense-card {
+  .card-box {
     padding: 16px;
-  }
-
-  .expense-form {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .form-actions {
-    justify-content: stretch;
-  }
-
-  .save-btn {
-    width: 100%;
-    min-width: 0;
   }
 }

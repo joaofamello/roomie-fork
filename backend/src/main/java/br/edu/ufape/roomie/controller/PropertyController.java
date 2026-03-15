@@ -102,6 +102,13 @@ public class PropertyController {
         return ResponseEntity.ok(properties);
     }
 
+    @GetMapping("/resident/me")
+    public ResponseEntity<List<PropertyDetailView>> getMyResidentProperties(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        List<PropertyDetailView> properties = propertyRepository.findResidentDetails(user.getId());
+        return ResponseEntity.ok(properties);
+    }
+
     @GetMapping("/announcements/{id}")
     public ResponseEntity<PropertyResponseDTO> getDetails(@PathVariable Long id) {
         return ResponseEntity.ok(propertyService.getPropertyDetails(id));

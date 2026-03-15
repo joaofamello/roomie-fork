@@ -135,112 +135,135 @@
     </div>
   </div>
 
-  <!-- ───────── Tab: Registro de Despesas ───────── -->
-  <div *ngIf="activeTab === 'despesas'">
-    <div class="expense-card">
-      <div class="expense-header">
-        <h3>Registrar nova despesa</h3>
-        <p>Preencha os campos obrigatórios para lançar uma despesa do imóvel.</p>
+  <!-- ───────── Tab: Despesas da Moradia ───────── -->
+  <div *ngIf="activeTab === 'despesas'" class="despesas-tab-container">
+    <div class="loading-state" *ngIf="isLoadingProperties">
+      <span class="material-icons spin">autorenew</span>
+      Carregando imóveis...
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoadingProperties && myProperties.length === 0">
+      <span class="material-icons empty-icon">home_work</span>
+      <p>Você não possui contratos ativos em nenhuma moradia no momento.</p>
+    </div>
+
+    <div *ngIf="!isLoadingProperties && myProperties.length > 0" class="expense-layout">
+      
+      <!-- Top header / Dropdown for Property -->
+      <div class="property-selector-card card-box">
+        <form [formGroup]="expenseForm" class="property-selector-form">
+          <div class="form-field">
+            <label for="expensePropertyId">Selecione a Moradia</label>
+            <select id="expensePropertyId" formControlName="propertyId" [class.input-invalid]="isInvalid('propertyId')">
+              <option [ngValue]="null" disabled>Escolha um imóvel</option>
+              <option *ngFor="let property of myProperties" [ngValue]="property.idImovel">
+                {{ property.titulo }} - {{ property.cidade }}/{{ property.estado }}
+              </option>
+            </select>
+          </div>
+        </form>
       </div>
 
-      <div class="loading-state" *ngIf="isLoadingProperties">
+      <div class="loading-state" *ngIf="isLoadingSummary">
         <span class="material-icons spin">autorenew</span>
-        Carregando imóveis...
+        Calculando despesas...
       </div>
 
-      <form
-        *ngIf="!isLoadingProperties"
-        [formGroup]="expenseForm"
-        (ngSubmit)="submitExpense()"
-        class="expense-form"
-        novalidate
-      >
-        <div class="form-field field-full">
-          <label for="expensePropertyId">Imóvel <span class="required-mark">*</span></label>
-          <select
-            id="expensePropertyId"
-            formControlName="propertyId"
-            [class.input-invalid]="isInvalid('propertyId')"
-          >
-            <option [ngValue]="null" disabled>Selecione um imóvel</option>
-            <option *ngFor="let property of myProperties" [ngValue]="property.idImovel">
-              {{ property.titulo }} - {{ property.cidade }}/{{ property.estado }}
-            </option>
-          </select>
-          <p class="field-error" *ngIf="hasError('propertyId', 'required')">
-            Selecione o imóvel da despesa.
-          </p>
-          <p class="field-hint" *ngIf="myProperties.length === 0">
-            Você ainda não possui imóveis para registrar despesas.
-          </p>
+      <div *ngIf="expenseSummary && !isLoadingSummary" class="expense-dashboard">
+        
+        <!-- Summary Cards -->
+        <div class="dashboard-cards">
+          <div class="dash-card">
+            <div class="dash-icon"><span class="material-icons">payments</span></div>
+            <div class="dash-info">
+              <span class="dash-label">Total Acumulado</span>
+              <span class="dash-value">R$ {{ expenseSummary.totalAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-icon bg-blue"><span class="material-icons">group</span></div>
+            <div class="dash-info">
+              <span class="dash-label">Moradores Ativos</span>
+              <span class="dash-value">{{ expenseSummary.numberOfResidents }}</span>
+            </div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-icon bg-green"><span class="material-icons">calculate</span></div>
+            <div class="dash-info">
+              <span class="dash-label">Valor por Morador</span>
+              <span class="dash-value">R$ {{ expenseSummary.amountPerResident | number:'1.2-2' }}</span>
+            </div>
+          </div>
         </div>
 
-        <div class="form-field field-full">
-          <label for="expenseDescription">Descrição <span class="required-mark">*</span></label>
-          <textarea
-            id="expenseDescription"
-            formControlName="description"
-            rows="3"
-            maxlength="160"
-            placeholder="Ex: Conta de energia de março"
-            [class.input-invalid]="isInvalid('description')"
-          ></textarea>
-          <p class="field-error" *ngIf="hasError('description', 'required')">
-            Informe uma descrição para a despesa.
-          </p>
-          <p class="field-error" *ngIf="hasError('description', 'maxlength')">
-            A descrição deve ter no máximo 160 caracteres.
-          </p>
+        <div class="expense-grid">
+          <!-- Histórico List -->
+          <div class="history-section card-box">
+            <h3>Histórico de Despesas</h3>
+            <div class="empty-state-small" *ngIf="expenseSummary.expenses.length === 0">
+              <span class="material-icons empty-icon-small">receipt_long</span>
+              <p>Nenhuma despesa registrada ainda.</p>
+            </div>
+            
+            <div class="table-wrapper" *ngIf="expenseSummary.expenses.length > 0">
+              <table class="report-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th class="right-align">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let exp of expenseSummary.expenses">
+                    <td class="date-col">{{ exp.expenseDate | date:'dd/MM/yyyy' }}</td>
+                    <td class="desc-col">{{ exp.description }}</td>
+                    <td class="price-col right-align">R$ {{ exp.amount | number:'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Formulário Registro -->
+          <div class="form-section card-box">
+            <div class="expense-header">
+              <h3>Registrar nova despesa</h3>
+            </div>
+            <form [formGroup]="expenseForm" (ngSubmit)="submitExpense()" class="expense-form" novalidate>
+              <div class="form-field field-full">
+                <label for="expenseDescription">Descrição <span class="required-mark">*</span></label>
+                <textarea id="expenseDescription" formControlName="description" rows="2" maxlength="160" placeholder="Ex: Conta de energia de março" [class.input-invalid]="isInvalid('description')"></textarea>
+                <p class="field-error" *ngIf="hasError('description', 'required')">Informe uma descrição.</p>
+              </div>
+
+              <div class="form-field">
+                <label for="expenseAmount">Valor (R$) <span class="required-mark">*</span></label>
+                <input id="expenseAmount" type="number" min="0.01" step="0.01" formControlName="amount" placeholder="0,00" [class.input-invalid]="isInvalid('amount')" />
+                <p class="field-error" *ngIf="hasError('amount', 'required')">Informe o valor.</p>
+              </div>
+
+              <div class="form-field">
+                <label for="expenseDate">Data <span class="required-mark">*</span></label>
+                <input id="expenseDate" type="date" [max]="maxExpenseDate" formControlName="expenseDate" [class.input-invalid]="isInvalid('expenseDate')" />
+                <p class="field-error" *ngIf="hasError('expenseDate', 'required')">Informe a data.</p>
+              </div>
+
+              <div class="form-status field-full" *ngIf="expenseSubmitSuccess || expenseSubmitError">
+                <p class="status-success" *ngIf="expenseSubmitSuccess">{{ expenseSubmitSuccess }}</p>
+                <p class="status-error" *ngIf="expenseSubmitError">{{ expenseSubmitError }}</p>
+              </div>
+
+              <div class="field-full form-actions">
+                <button type="submit" class="save-btn w-full" [disabled]="isSubmittingExpense || expenseForm.invalid">
+                  {{ isSubmittingExpense ? 'Salvando...' : 'Registrar despesa' }}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <div class="form-field">
-          <label for="expenseAmount">Valor (R$) <span class="required-mark">*</span></label>
-          <input
-            id="expenseAmount"
-            type="number"
-            min="0.01"
-            step="0.01"
-            formControlName="amount"
-            placeholder="0,00"
-            [class.input-invalid]="isInvalid('amount')"
-          />
-          <p class="field-error" *ngIf="hasError('amount', 'required')">
-            Informe o valor da despesa.
-          </p>
-          <p class="field-error" *ngIf="hasError('amount', 'min')">
-            O valor deve ser maior que zero.
-          </p>
-        </div>
-
-        <div class="form-field">
-          <label for="expenseDate">Data da despesa <span class="required-mark">*</span></label>
-          <input
-            id="expenseDate"
-            type="date"
-            [max]="maxExpenseDate"
-            formControlName="expenseDate"
-            [class.input-invalid]="isInvalid('expenseDate')"
-          />
-          <p class="field-error" *ngIf="hasError('expenseDate', 'required')">
-            Informe a data da despesa.
-          </p>
-        </div>
-
-        <div class="form-status field-full" *ngIf="expenseSubmitSuccess || expenseSubmitError">
-          <p class="status-success" *ngIf="expenseSubmitSuccess">{{ expenseSubmitSuccess }}</p>
-          <p class="status-error" *ngIf="expenseSubmitError">{{ expenseSubmitError }}</p>
-        </div>
-
-        <div class="field-full form-actions">
-          <button
-            type="submit"
-            class="save-btn"
-            [disabled]="isSubmittingExpense || myProperties.length === 0"
-          >
-            {{ isSubmittingExpense ? 'Salvando...' : 'Registrar despesa' }}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 

@@ -30,6 +30,10 @@ export class PropertyService {
     return this.http.get<PropertyDetailView[]>(`${this.apiUrl}/meus`);
   }
 
+  getMyResidentProperties(): Observable<PropertyDetailView[]> {
+    return this.http.get<PropertyDetailView[]>(`${this.apiUrl}/resident/me`);
+  }
+
   getById(id: number): Observable<Property> {
     return this.http.get<Property>(`${this.apiUrl}/${id}`);
   }
