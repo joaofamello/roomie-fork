@@ -262,4 +262,121 @@ class PropertyControllerTest {
 
     assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
   }
+
+  @Test
+  @DisplayName("Deve retornar 200 OK ao buscar detalhe por ID existente")
+  void testaGetDetailByIdEncontrado() throws Exception {
+    PropertyDetailView mockDetailView = mock(PropertyDetailView.class);
+    when(propertyRepository.findDetailById(1L)).thenReturn(java.util.Optional.of(mockDetailView));
+
+    var response = mvc.perform(get("/api/properties/1/details")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Deve retornar 404 Not Found ao buscar detalhe por ID inexistente")
+  void testaGetDetailByIdNaoEncontrado() throws Exception {
+    when(propertyRepository.findDetailById(999L)).thenReturn(java.util.Optional.empty());
+
+    var response = mvc.perform(get("/api/properties/999/details")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+  }
+
+  @Test
+  @DisplayName("Deve listar ranking e retornar 200 OK")
+  void testaGetRanking() throws Exception {
+    when(propertyRepository.findAllRanking()).thenReturn(java.util.List.of());
+
+    var response = mvc.perform(get("/api/properties/ranking")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Deve listar propriedades de residente (resident/me) e retornar 200 OK")
+  void testaGetMyResidentProperties() throws Exception {
+    Authentication auth = setupAuth("residente@ufape.edu.br");
+    when(propertyRepository.findResidentDetails(1L)).thenReturn(java.util.List.of());
+
+    var response = mvc.perform(get("/api/properties/resident/me").principal(auth)).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Deve retornar 404 quando property nao e encontrada no publishProperty")
+  void testaPublishPropertyNotFound() throws Exception {
+    Authentication auth = setupAuth("dono@ufape.edu.br");
+    when(propertyRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+
+    var response = mvc.perform(patch("/api/properties/1/publish").principal(auth)).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+  }
+
+  @Test
+  @DisplayName("Deve retornar 403 quando property nao for do dono logado no publishProperty")
+  void testaPublishPropertyNotOwner() throws Exception {
+    Authentication auth = setupAuth("usuario@ufape.edu.br");
+
+    User owner = new User();
+    owner.setId(2L);
+
+    Property property = new Property();
+    property.setId(1L);
+    property.setOwner(owner);
+
+    when(propertyRepository.findById(1L)).thenReturn(java.util.Optional.of(property));
+
+    var response = mvc.perform(patch("/api/properties/1/publish").principal(auth)).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+  }
+
+  @Test
+  @DisplayName("Deve retornar 400 quando property ja estiver published")
+  void testaPublishPropertyAlreadyActive() throws Exception {
+    Authentication auth = setupAuth("dono@ufape.edu.br");
+    User owner = (User) auth.getPrincipal();
+
+    Property property = new Property();
+    property.setId(1L);
+    property.setOwner(owner);
+    property.setStatus(PropertyStatus.ACTIVE);
+
+    when(propertyRepository.findById(1L)).thenReturn(java.util.Optional.of(property));
+
+    var response = mvc.perform(patch("/api/properties/1/publish").principal(auth)).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
+  @DisplayName("Deve deletar propriedade com sucesso e retornar 204")
+  @WithMockUser
+  void testaDeletePropertySuccess() throws Exception {
+    var response = mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/properties/1")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+  }
+
+  @Test
+  @DisplayName("Deve arquivar (draft) e retornar 200 OK")
+  @WithMockUser
+  void testaSetPropertyToDraftSuccess() throws Exception {
+    Property mockProperty = new Property();
+    mockProperty.setId(1L);
+    when(propertyService.setPropertyToDraft(1L)).thenReturn(mockProperty);
+
+    var response = mvc.perform(patch("/api/properties/1/draft")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Deve confirmar estudante com sucesso e retornar 200 OK")
+  @WithMockUser
+  void testaConfirmStudentSuccess() throws Exception {
+    Property mockProperty = new Property();
+    mockProperty.setId(1L);
+    mockProperty.setStatus(PropertyStatus.ACTIVE);
+    when(propertyService.confirmStudent(1L, 2L)).thenReturn(mockProperty);
+
+    var response = mvc.perform(patch("/api/properties/1/confirm").param("studentId", "2")).andReturn().getResponse();
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+  }
+
 }
