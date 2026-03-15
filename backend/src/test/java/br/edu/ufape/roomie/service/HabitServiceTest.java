@@ -206,32 +206,50 @@ class HabitServiceTest {
     }
 
     @Test
-    @DisplayName("Deve ignorar hobbies nulos ou em branco na lista")
-    void createOrUpdate_ignoresBlankHobbies() {
+    @DisplayName("Deve ignorar elementos vazios ou nulos nas listas (Hobbies, LifeStyles, CleaningPrefs)")
+    void createOrUpdate_ignoresNullOrBlankListElements() {
         mockStudent.setHabit(mockHabit);
         when(studentRepository.findById(1L)).thenReturn(Optional.of(mockStudent));
         when(habitRepository.save(any(Habit.class))).thenAnswer(inv -> inv.getArgument(0));
 
         HabitRequestDTO dto = new HabitRequestDTO();
-        dto.setStudySchedule(null);
-        dto.setHobbies(List.of("Leitura", "  ", "Games"));
-        dto.setLifeStyles(new ArrayList<>());
-        dto.setCleaningPrefs(new ArrayList<>());
+        
+        List<String> hobbies = new ArrayList<>();
+        hobbies.add(null);
+        hobbies.add("");
+        hobbies.add("   ");
+        hobbies.add("Valid Hobby");
+        dto.setHobbies(hobbies);
+
+        List<String> lifeStyles = new ArrayList<>();
+        lifeStyles.add(null);
+        lifeStyles.add("");
+        lifeStyles.add("   ");
+        lifeStyles.add("Valid LifeStyle");
+        dto.setLifeStyles(lifeStyles);
+
+        List<String> cleaningPrefs = new ArrayList<>();
+        cleaningPrefs.add(null);
+        cleaningPrefs.add("");
+        cleaningPrefs.add("   ");
+        cleaningPrefs.add("Valid CleaningPref");
+        dto.setCleaningPrefs(cleaningPrefs);
 
         HabitResponseDTO result = habitService.createOrUpdateHabit(mockStudent, dto);
 
-        assertThat(result.getHobbies()).containsExactlyInAnyOrder("Leitura", "Games");
+        assertThat(result.getHobbies()).containsExactly("Valid Hobby");
+        assertThat(result.getLifeStyles()).containsExactly("Valid LifeStyle");
+        assertThat(result.getCleaningPrefs()).containsExactly("Valid CleaningPref");
     }
 
     @Test
-    @DisplayName("Deve retornar listas vazias quando hobbies/estilos/limpeza são null no DTO")
-    void createOrUpdate_nullLists_producesEmptyLists() {
+    @DisplayName("Deve limpar listas corretamente com entradas null no DTO (Hobbies, LifeStyles, CleaningPrefs)")
+    void createOrUpdate_nullListRequests_clearLists() {
         mockStudent.setHabit(mockHabit);
         when(studentRepository.findById(1L)).thenReturn(Optional.of(mockStudent));
         when(habitRepository.save(any(Habit.class))).thenAnswer(inv -> inv.getArgument(0));
 
         HabitRequestDTO dto = new HabitRequestDTO();
-        dto.setStudySchedule("DAWN");
         dto.setHobbies(null);
         dto.setLifeStyles(null);
         dto.setCleaningPrefs(null);
