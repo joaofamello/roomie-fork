@@ -1,20 +1,25 @@
 package br.edu.ufape.roomie.controller;
 
-import br.edu.ufape.roomie.dto.AddressDTO;
-import br.edu.ufape.roomie.dto.PropertyRequestDTO;
-import br.edu.ufape.roomie.dto.PropertyResponseDTO;
-import br.edu.ufape.roomie.enums.PropertyStatus;
-import br.edu.ufape.roomie.enums.PropertyType;
-import br.edu.ufape.roomie.enums.UserGender;
-import br.edu.ufape.roomie.model.Property;
-import br.edu.ufape.roomie.model.User;
-import br.edu.ufape.roomie.projection.PropertyDetailView;
-import br.edu.ufape.roomie.repository.PropertyRepository;
-import br.edu.ufape.roomie.service.PropertyService;
-import br.edu.ufape.roomie.service.TokenService;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -33,17 +38,24 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import br.edu.ufape.roomie.dto.AddressDTO;
+import br.edu.ufape.roomie.dto.PropertyRequestDTO;
+import br.edu.ufape.roomie.dto.PropertyResponseDTO;
+import br.edu.ufape.roomie.enums.PropertyStatus;
+import br.edu.ufape.roomie.enums.PropertyType;
+import br.edu.ufape.roomie.enums.UserGender;
+import br.edu.ufape.roomie.model.Property;
+import br.edu.ufape.roomie.model.User;
+import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.repository.PropertyRepository;
+import br.edu.ufape.roomie.service.PropertyService;
+import br.edu.ufape.roomie.service.TokenService;
 
 @WebMvcTest(controllers = PropertyController.class, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -156,6 +168,24 @@ class PropertyControllerTest {
 
         var response = mvc.perform(get("/api/properties")).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Deve chamar o repository com parâmetros fornecidos e retornar 200 OK")
+    void testaGetAllPropertiesComParametros() throws Exception {
+        when(propertyRepository.findWithFilters("Rio", "Centro", 100.0, 500.0, "HOUSE"))
+                .thenReturn(List.of(new Property()));
+
+        var response = mvc.perform(get("/api/properties")
+                .param("location", "Rio")
+                .param("district", "Centro")
+                .param("minPrice", "100")
+                .param("maxPrice", "500")
+                .param("propertyType", "house")
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        verify(propertyRepository, times(1)).findWithFilters("Rio", "Centro", 100.0, 500.0, "HOUSE");
     }
 
     @Test
@@ -301,6 +331,17 @@ class PropertyControllerTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 404 Not Found quando deleteProperty lançar ResponseStatusException")
+    void testaDeletePropertyNotFound() throws Exception {
+        doThrow(new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "não encontrado"))
+                .when(propertyService).deleteProperty(1L);
+
+        var response = mvc.perform(delete("/api/properties/1")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).contains("não encontrado");
+    }
+
+    @Test
     @DisplayName("Deve alterar para rascunho com sucesso e retornar 200 OK")
     void testaSetToDraftComSucesso() throws Exception {
         Property property = new Property();
@@ -318,6 +359,16 @@ class PropertyControllerTest {
 
         var response = mvc.perform(patch("/api/properties/1/draft")).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found se o service lançar ResponseStatusException no draft")
+    void testaSetToDraftNotFound() throws Exception {
+        doThrow(new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "nao encontrado"))
+                .when(propertyService).setPropertyToDraft(1L);
+
+        var response = mvc.perform(patch("/api/properties/1/draft")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -386,6 +437,76 @@ class PropertyControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).contains("\"status\":\"RENTED\"");
         assertThat(response.getContentAsString()).contains("\"confirmedStudentId\":5");
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found quando buscar detalhes por id inexistente")
+    void testaGetDetailsByIdNaoEncontrado() throws Exception {
+        when(propertyRepository.findDetailById(999L)).thenReturn(Optional.empty());
+
+        var response = mvc.perform(get("/api/properties/999/details")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 OK com detalhes por id existente")
+    void testaGetDetailsByIdEncontrado() throws Exception {
+        PropertyDetailView mockDetailView = mock(PropertyDetailView.class);
+        when(propertyRepository.findDetailById(1L)).thenReturn(Optional.of(mockDetailView));
+
+        var response = mvc.perform(get("/api/properties/1/details")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 OK ao buscar ranking")
+    void testaGetRanking() throws Exception {
+        when(propertyRepository.findAllRanking()).thenReturn(List.of());
+
+        var response = mvc.perform(get("/api/properties/ranking")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 OK ao buscar propriedades do residente logado")
+    void testaGetMyResidentProperties() throws Exception {
+        Authentication auth = setupAuth("resident@ufape.edu.br");
+        when(propertyRepository.findResidentDetails(1L)).thenReturn(List.of());
+
+        var response = mvc.perform(get("/api/properties/resident/me").principal(auth)).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found ao publicar imóvel inexistente")
+    void testaPublishPropertyNotFound() throws Exception {
+        Authentication auth = setupAuth("dono@ufape.edu.br");
+        when(propertyRepository.findById(1L)).thenReturn(Optional.empty());
+
+        var response = mvc.perform(patch("/api/properties/1/publish").principal(auth)).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 Bad Request quando confirmar estudante falhar")
+    void testaConfirmStudentComErro() throws Exception {
+        when(propertyService.confirmStudent(1L, 5L))
+                .thenThrow(new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "algo deu errado"));
+
+        var response = mvc.perform(patch("/api/properties/1/confirm").param("studentId", "5")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).contains("algo deu errado");
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found quando confirmar estudante falhar com ResponseStatusException")
+    void testaConfirmStudentNotFound() throws Exception {
+        when(propertyService.confirmStudent(1L, 5L))
+                .thenThrow(new org.springframework.web.server.ResponseStatusException(HttpStatus.NOT_FOUND, "não encontrado"));
+
+        var response = mvc.perform(patch("/api/properties/1/confirm").param("studentId", "5")).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).contains("não encontrado");
     }
 
 }
