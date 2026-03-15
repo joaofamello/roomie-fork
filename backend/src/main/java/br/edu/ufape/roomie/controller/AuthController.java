@@ -23,25 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final AuthService authService;
-    private final TokenService tokenService;
+  private final AuthenticationManager authenticationManager;
+  private final AuthService authService;
+  private final TokenService tokenService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody UserDTO userDTO) {
-        UserResponseDTO registeredUser = this.authService.register(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
-    }
+  @PostMapping("/register")
+  public ResponseEntity<UserResponseDTO> register(@RequestBody UserDTO userDTO) {
+    UserResponseDTO registeredUser = this.authService.register(userDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO data) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO data) {
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
 
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        User user = (User) authentication.getPrincipal();
-        String token = tokenService.generateToken(user);
+    Authentication authentication = authenticationManager.authenticate(authToken);
+    User user = (User) authentication.getPrincipal();
+    String token = tokenService.generateToken(user);
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
-
-    }
+    return ResponseEntity.ok(new LoginResponseDTO(token));
+  }
 }

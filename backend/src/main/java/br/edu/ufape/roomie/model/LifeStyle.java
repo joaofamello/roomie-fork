@@ -21,16 +21,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "estilo_vida")
 public class LifeStyle {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_estilo")
-    private Long idStyle;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_estilo")
+  private Long idStyle;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_habito", nullable = false)
-    private Habit habit;
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_habito", nullable = false)
+  private Habit habit;
 
-    @Column(name = "estilo", nullable = false)
-    private String style;
+  @Column(name = "estilo", nullable = false)
+  private String style;
 }

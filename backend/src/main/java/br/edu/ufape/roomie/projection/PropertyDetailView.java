@@ -1,39 +1,39 @@
 package br.edu.ufape.roomie.projection;
 
 public interface PropertyDetailView {
-    Long getIdImovel();
+  Long getIdImovel();
 
-    String getTitulo();
+  String getTitulo();
 
-    String getDescricao();
+  String getDescricao();
 
-    String getTipo();
+  String getTipo();
 
-    Double getPreco();
+  Double getPreco();
 
-    String getGeneroMoradores();
+  String getGeneroMoradores();
 
-    Boolean getAceitaAnimais();
+  Boolean getAceitaAnimais();
 
-    Boolean getTemGaragem();
+  Boolean getTemGaragem();
 
-    Integer getVagasDisponiveis();
+  Integer getVagasDisponiveis();
 
-    String getStatus();
+  String getStatus();
 
-    String getRua();
+  String getRua();
 
-    String getNumEndereco();
+  String getNumEndereco();
 
-    String getBairro();
+  String getBairro();
 
-    String getCidade();
+  String getCidade();
 
-    String getEstado();
+  String getEstado();
 
-    String getCep();
+  String getCep();
 
-    String getNomeProprietario();
+  String getNomeProprietario();
 
-    String getEmailProprietario();
+  String getEmailProprietario();
 }

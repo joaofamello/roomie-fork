@@ -10,8 +10,6 @@ import org.springframework.test.context.ActiveProfiles;
 @Disabled("Teste de integração que requer banco de dados completo — executar manualmente")
 class RoomieApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
-
+  @Test
+  void contextLoads() {}
 }

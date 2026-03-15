@@ -1,21 +1,21 @@
 package br.edu.ufape.roomie.projection;
 
 public interface StudentEngagementView {
-    Long getIdUsuario();
+  Long getIdUsuario();
 
-    String getNome();
+  String getNome();
 
-    String getEmail();
+  String getEmail();
 
-    String getCurso();
+  String getCurso();
 
-    String getInstituicao();
+  String getInstituicao();
 
-    Long getTotalInteresses();
+  Long getTotalInteresses();
 
-    Long getTotalContratos();
+  Long getTotalContratos();
 
-    Long getTotalAvaliacoesFeit();
+  Long getTotalAvaliacoesFeit();
 
-    Double getMediaNotaDada();
+  Double getMediaNotaDada();
 }

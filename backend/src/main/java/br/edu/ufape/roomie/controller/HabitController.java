@@ -6,6 +6,7 @@ import br.edu.ufape.roomie.model.Student;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.repository.StudentRepository;
 import br.edu.ufape.roomie.service.HabitService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,43 +17,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/habits")
 @RequiredArgsConstructor
 public class HabitController {
 
-    private final HabitService habitService;
-    private final StudentRepository studentRepository;
+  private final HabitService habitService;
+  private final StudentRepository studentRepository;
 
-    @GetMapping
-    public ResponseEntity<?> getMyHabits(@AuthenticationPrincipal User loggedInUser) {
-        Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
-        if (optStudent.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Acesso negado: Apenas estudantes podem gerenciar hábitos.");
-        }
-
-        HabitResponseDTO response = habitService.getHabitByStudent(optStudent.get());
-        if (response == null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(response);
+  @GetMapping
+  public ResponseEntity<?> getMyHabits(@AuthenticationPrincipal User loggedInUser) {
+    Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
+    if (optStudent.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body("Acesso negado: Apenas estudantes podem gerenciar hábitos.");
     }
 
-    @PostMapping
-    public ResponseEntity<?> saveHabits(
-            @AuthenticationPrincipal User loggedInUser,
-            @RequestBody HabitRequestDTO dto
-    ) {
-        Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
-        if (optStudent.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Acesso negado: Apenas estudantes podem gerenciar hábitos.");
-        }
-
-        HabitResponseDTO response = habitService.createOrUpdateHabit(optStudent.get(), dto);
-        return ResponseEntity.ok(response);
+    HabitResponseDTO response = habitService.getHabitByStudent(optStudent.get());
+    if (response == null) {
+      return ResponseEntity.noContent().build();
     }
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping
+  public ResponseEntity<?> saveHabits(
+      @AuthenticationPrincipal User loggedInUser, @RequestBody HabitRequestDTO dto) {
+    Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
+    if (optStudent.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body("Acesso negado: Apenas estudantes podem gerenciar hábitos.");
+    }
+
+    HabitResponseDTO response = habitService.createOrUpdateHabit(optStudent.get(), dto);
+    return ResponseEntity.ok(response);
+  }
 }

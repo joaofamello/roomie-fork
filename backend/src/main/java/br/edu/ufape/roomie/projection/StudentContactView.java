@@ -1,17 +1,17 @@
 package br.edu.ufape.roomie.projection;
 
 public interface StudentContactView {
-    Long getIdUsuario();
+  Long getIdUsuario();
 
-    String getNome();
+  String getNome();
 
-    String getEmail();
+  String getEmail();
 
-    String getGenero();
+  String getGenero();
 
-    String getCurso();
+  String getCurso();
 
-    String getInstituicao();
+  String getInstituicao();
 
-    String getTelefones();
+  String getTelefones();
 }

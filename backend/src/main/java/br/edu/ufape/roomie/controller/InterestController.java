@@ -6,6 +6,8 @@ import br.edu.ufape.roomie.model.Student;
 import br.edu.ufape.roomie.model.User;
 import br.edu.ufape.roomie.repository.StudentRepository;
 import br.edu.ufape.roomie.service.InterestService;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,79 +20,72 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/announcements")
 @RequiredArgsConstructor
 public class InterestController {
 
-    private final InterestService interestService;
-    private final StudentRepository studentRepository;
+  private final InterestService interestService;
+  private final StudentRepository studentRepository;
 
-    @PostMapping("/{id}/interest")
-    public ResponseEntity<String> expressInterest(
-            @PathVariable("id") Long propertyId,
-            @AuthenticationPrincipal User loggedInUser) {
+  @PostMapping("/{id}/interest")
+  public ResponseEntity<String> expressInterest(
+      @PathVariable("id") Long propertyId, @AuthenticationPrincipal User loggedInUser) {
 
-        Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
-        if (optStudent.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Acesso negado: Apenas estudantes podem demonstrar interesse em imóveis.");
-        }
-
-        try {
-            interestService.registerInterest(propertyId, optStudent.get());
-            return ResponseEntity.ok("Interesse registrado com sucesso. O administrador foi notificado.");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 409
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 404
-        }
+    Optional<Student> optStudent = studentRepository.findById(loggedInUser.getId());
+    if (optStudent.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body("Acesso negado: Apenas estudantes podem demonstrar interesse em imóveis.");
     }
 
-    @GetMapping("/{id}/interest/check")
-    public ResponseEntity<?> checkInterest(
-            @PathVariable("id") Long propertyId,
-            @AuthenticationPrincipal User loggedInUser) {
+    try {
+      interestService.registerInterest(propertyId, optStudent.get());
+      return ResponseEntity.ok("Interesse registrado com sucesso. O administrador foi notificado.");
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 409
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 404
+    }
+  }
 
-        if (!(loggedInUser instanceof Student student)) {
-            return ResponseEntity.ok(java.util.Map.of("hasInterest", false));
-        }
+  @GetMapping("/{id}/interest/check")
+  public ResponseEntity<?> checkInterest(
+      @PathVariable("id") Long propertyId, @AuthenticationPrincipal User loggedInUser) {
 
-        boolean hasInterest = interestService.hasInterest(propertyId, student);
-        return ResponseEntity.ok(java.util.Map.of("hasInterest", hasInterest));
+    if (!(loggedInUser instanceof Student student)) {
+      return ResponseEntity.ok(java.util.Map.of("hasInterest", false));
     }
 
-    @GetMapping("/{id}/interests")
-    public ResponseEntity<?> getInterests(
-            @PathVariable("id") Long propertyId,
-            @AuthenticationPrincipal User loggedInUser) {
-        try {
-            List<InterestSummaryDTO> interests = interestService.listInterestsForProperty(propertyId, loggedInUser);
-            return ResponseEntity.ok(interests);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
+    boolean hasInterest = interestService.hasInterest(propertyId, student);
+    return ResponseEntity.ok(java.util.Map.of("hasInterest", hasInterest));
+  }
 
-    @PatchMapping("/interests/{interestId}/status")
-    public ResponseEntity<String> updateStatus(
-            @PathVariable Long interestId,
-            @RequestParam("status") InterestStatus status,
-            @AuthenticationPrincipal User loggedInUser) {
-        try {
-            interestService.updateInterestStatus(interestId, status, loggedInUser);
-            return ResponseEntity.ok("Status da proposta atualizado para " + status);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+  @GetMapping("/{id}/interests")
+  public ResponseEntity<?> getInterests(
+      @PathVariable("id") Long propertyId, @AuthenticationPrincipal User loggedInUser) {
+    try {
+      List<InterestSummaryDTO> interests =
+          interestService.listInterestsForProperty(propertyId, loggedInUser);
+      return ResponseEntity.ok(interests);
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+  }
 
+  @PatchMapping("/interests/{interestId}/status")
+  public ResponseEntity<String> updateStatus(
+      @PathVariable Long interestId,
+      @RequestParam("status") InterestStatus status,
+      @AuthenticationPrincipal User loggedInUser) {
+    try {
+      interestService.updateInterestStatus(interestId, status, loggedInUser);
+      return ResponseEntity.ok("Status da proposta atualizado para " + status);
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+  }
 }

@@ -19,13 +19,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Student extends User {
 
-    @Column(name = "curso", nullable = false, length = 100)
-    private String major;
+  @Column(name = "curso", nullable = false, length = 100)
+  private String major;
 
-    @Column(name = "instituicao", nullable = false, length = 100)
-    private String institution;
+  @Column(name = "instituicao", nullable = false, length = 100)
+  private String institution;
 
-    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Habit habit;
-
+  @OneToOne(
+      mappedBy = "student",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private Habit habit;
 }

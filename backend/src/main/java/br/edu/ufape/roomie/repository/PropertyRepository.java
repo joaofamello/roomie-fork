@@ -1,73 +1,87 @@
 package br.edu.ufape.roomie.repository;
 
+import br.edu.ufape.roomie.model.Property;
+import br.edu.ufape.roomie.projection.PropertyDetailView;
+import br.edu.ufape.roomie.projection.PropertyRankingView;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import br.edu.ufape.roomie.model.Property;
-import br.edu.ufape.roomie.projection.PropertyDetailView;
-import br.edu.ufape.roomie.projection.PropertyRankingView;
-
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-    @Query(value = "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, " +
-            "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, " +
-            "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, " +
-            "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, " +
-            "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario " +
-            "FROM v_detalhes_imovel", nativeQuery = true)
-    List<PropertyDetailView> findAllDetails();
+  @Query(
+      value =
+          "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, "
+              + "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, "
+              + "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, "
+              + "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, "
+              + "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario "
+              + "FROM v_detalhes_imovel",
+      nativeQuery = true)
+  List<PropertyDetailView> findAllDetails();
 
-    @Query(value = "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, " +
-            "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, " +
-            "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, " +
-            "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, " +
-            "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario " +
-            "FROM v_detalhes_imovel WHERE id_imovel = :id", nativeQuery = true)
-    Optional<PropertyDetailView> findDetailById(@Param("id") Long id);
+  @Query(
+      value =
+          "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, "
+              + "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, "
+              + "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, "
+              + "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, "
+              + "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario "
+              + "FROM v_detalhes_imovel WHERE id_imovel = :id",
+      nativeQuery = true)
+  Optional<PropertyDetailView> findDetailById(@Param("id") Long id);
 
-    @Query(value = "SELECT p.* FROM imovel p LEFT JOIN endereco a ON p.id_imovel = a.id_imovel " +
-            "WHERE (p.status = 'ACTIVE' OR (p.status = 'RENTED' AND p.vagas_disponiveis > 0)) " +
-            "AND (:location = '[ALL]' OR LOWER(a.cidade) LIKE LOWER(CONCAT('%', :location, '%'))) " +
-            "AND (:district = '[ALL]' OR LOWER(a.bairro) LIKE LOWER(CONCAT('%', :district, '%'))) " +
-            "AND (:minPrice < 0 OR p.preco >= :minPrice) " +
-            "AND (:maxPrice < 0 OR p.preco <= :maxPrice) " +
-            "AND (:type = '[ALL]' OR CAST(p.tipo AS VARCHAR) = :type) ",
-            nativeQuery = true)
-    List<Property> findWithFilters(
-            @Param("location") String location,
-            @Param("district") String district,
-            @Param("minPrice") double minPrice,
-            @Param("maxPrice") double maxPrice,
-            @Param("type") String type
-    );
+  @Query(
+      value =
+          "SELECT p.* FROM imovel p LEFT JOIN endereco a ON p.id_imovel = a.id_imovel "
+              + "WHERE (p.status = 'ACTIVE' OR (p.status = 'RENTED' AND p.vagas_disponiveis > 0)) "
+              + "AND (:location = '[ALL]' OR LOWER(a.cidade) LIKE LOWER(CONCAT('%', :location, '%'))) "
+              + "AND (:district = '[ALL]' OR LOWER(a.bairro) LIKE LOWER(CONCAT('%', :district, '%'))) "
+              + "AND (:minPrice < 0 OR p.preco >= :minPrice) "
+              + "AND (:maxPrice < 0 OR p.preco <= :maxPrice) "
+              + "AND (:type = '[ALL]' OR CAST(p.tipo AS VARCHAR) = :type) ",
+      nativeQuery = true)
+  List<Property> findWithFilters(
+      @Param("location") String location,
+      @Param("district") String district,
+      @Param("minPrice") double minPrice,
+      @Param("maxPrice") double maxPrice,
+      @Param("type") String type);
 
-    @Query(value = "SELECT id_imovel AS idImovel, titulo, tipo, preco, status, cidade, bairro, " +
-            "nome_proprietario AS nomeProprietario, total_avaliacoes AS totalAvaliacoes, " +
-            "media_nota AS mediaNota, pior_nota AS piorNota, melhor_nota AS melhorNota " +
-            "FROM v_ranking_imoveis_avaliados", nativeQuery = true)
-    List<PropertyRankingView> findAllRanking();
-    @Query(value = "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, " +
-            "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, " +
-            "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, " +
-            "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, " +
-            "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario " +
-            "FROM v_detalhes_imovel WHERE email_proprietario = :email", nativeQuery = true)
-    List<PropertyDetailView> findMyDetails(@Param("email") String email);
+  @Query(
+      value =
+          "SELECT id_imovel AS idImovel, titulo, tipo, preco, status, cidade, bairro, "
+              + "nome_proprietario AS nomeProprietario, total_avaliacoes AS totalAvaliacoes, "
+              + "media_nota AS mediaNota, pior_nota AS piorNota, melhor_nota AS melhorNota "
+              + "FROM v_ranking_imoveis_avaliados",
+      nativeQuery = true)
+  List<PropertyRankingView> findAllRanking();
 
-    @Query(value = "SELECT DISTINCT v.id_imovel AS idImovel, v.titulo, v.descricao, v.tipo, v.preco, " +
-            "v.genero_moradores AS generoMoradores, v.aceita_animais AS aceitaAnimais, " +
-            "v.tem_garagem AS temGaragem, v.vagas_disponiveis AS vagasDisponiveis, v.status, " +
-            "v.rua, v.num_endereco AS numEndereco, v.bairro, v.cidade, v.estado, v.cep, " +
-            "v.nome_proprietario AS nomeProprietario, v.email_proprietario AS emailProprietario " +
-            "FROM v_detalhes_imovel v " +
-            "JOIN contrato_locacao c ON v.id_imovel = c.id_imovel " +
-            "WHERE (c.id_estudante = :userId OR c.id_proprietario = :userId) AND c.status_contrato = 'ACTIVE'", nativeQuery = true)
-    List<PropertyDetailView> findResidentDetails(@Param("userId") Long userId);
+  @Query(
+      value =
+          "SELECT id_imovel AS idImovel, titulo, descricao, tipo, preco, "
+              + "genero_moradores AS generoMoradores, aceita_animais AS aceitaAnimais, "
+              + "tem_garagem AS temGaragem, vagas_disponiveis AS vagasDisponiveis, status, "
+              + "rua, num_endereco AS numEndereco, bairro, cidade, estado, cep, "
+              + "nome_proprietario AS nomeProprietario, email_proprietario AS emailProprietario "
+              + "FROM v_detalhes_imovel WHERE email_proprietario = :email",
+      nativeQuery = true)
+  List<PropertyDetailView> findMyDetails(@Param("email") String email);
 
+  @Query(
+      value =
+          "SELECT DISTINCT v.id_imovel AS idImovel, v.titulo, v.descricao, v.tipo, v.preco, "
+              + "v.genero_moradores AS generoMoradores, v.aceita_animais AS aceitaAnimais, "
+              + "v.tem_garagem AS temGaragem, v.vagas_disponiveis AS vagasDisponiveis, v.status, "
+              + "v.rua, v.num_endereco AS numEndereco, v.bairro, v.cidade, v.estado, v.cep, "
+              + "v.nome_proprietario AS nomeProprietario, v.email_proprietario AS emailProprietario "
+              + "FROM v_detalhes_imovel v "
+              + "JOIN contrato_locacao c ON v.id_imovel = c.id_imovel "
+              + "WHERE (c.id_estudante = :userId OR c.id_proprietario = :userId) AND c.status_contrato = 'ACTIVE'",
+      nativeQuery = true)
+  List<PropertyDetailView> findResidentDetails(@Param("userId") Long userId);
 }

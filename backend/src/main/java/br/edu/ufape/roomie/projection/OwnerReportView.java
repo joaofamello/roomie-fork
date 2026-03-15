@@ -1,19 +1,19 @@
 package br.edu.ufape.roomie.projection;
 
 public interface OwnerReportView {
-    Long getIdProprietario();
+  Long getIdProprietario();
 
-    String getNomeProprietario();
+  String getNomeProprietario();
 
-    String getEmailProprietario();
+  String getEmailProprietario();
 
-    Long getTotalImoveis();
+  Long getTotalImoveis();
 
-    Long getTotalVagasOferecidas();
+  Long getTotalVagasOferecidas();
 
-    Double getMediaPrecoImoveis();
+  Double getMediaPrecoImoveis();
 
-    Double getMenorPreco();
+  Double getMenorPreco();
 
-    Double getMaiorPreco();
+  Double getMaiorPreco();
 }

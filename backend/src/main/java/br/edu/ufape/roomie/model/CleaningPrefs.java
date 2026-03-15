@@ -21,16 +21,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CleaningPrefs {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_preferencia")
-    private Long idPref;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_preferencia")
+  private Long idPref;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_habito", nullable = false)
-    private Habit habit;
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_habito", nullable = false)
+  private Habit habit;
 
-    @Column(name = "preferencia", nullable = false)
-    private String pref;
+  @Column(name = "preferencia", nullable = false)
+  private String pref;
 }

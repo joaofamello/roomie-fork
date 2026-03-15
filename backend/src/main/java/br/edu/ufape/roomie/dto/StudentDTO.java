@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class StudentDTO {
-    private Long userId;
-    private String major;
-    private String institution;
+  private Long userId;
+  private String major;
+  private String institution;
 }

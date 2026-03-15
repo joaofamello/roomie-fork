@@ -17,20 +17,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Telefone {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_telefone")
-    private Long idTelefone;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_telefone")
+  private Long idTelefone;
 
-    @Column(name = "numero", nullable = false)
-    private String numero;
+  @Column(name = "numero", nullable = false)
+  private String numero;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private User usuario;
+  @ManyToOne
+  @JoinColumn(name = "id_usuario", nullable = false)
+  private User usuario;
 
-    public Telefone(String numero, User usuario) {
-        this.numero = numero;
-        this.usuario = usuario;
-    }
+  public Telefone(String numero, User usuario) {
+    this.numero = numero;
+    this.usuario = usuario;
+  }
 }

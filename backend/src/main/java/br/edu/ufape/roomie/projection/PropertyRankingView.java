@@ -1,27 +1,27 @@
 package br.edu.ufape.roomie.projection;
 
 public interface PropertyRankingView {
-    Long getIdImovel();
+  Long getIdImovel();
 
-    String getTitulo();
+  String getTitulo();
 
-    String getTipo();
+  String getTipo();
 
-    Double getPreco();
+  Double getPreco();
 
-    String getStatus();
+  String getStatus();
 
-    String getCidade();
+  String getCidade();
 
-    String getBairro();
+  String getBairro();
 
-    String getNomeProprietario();
+  String getNomeProprietario();
 
-    Long getTotalAvaliacoes();
+  Long getTotalAvaliacoes();
 
-    Double getMediaNota();
+  Double getMediaNota();
 
-    Integer getPiorNota();
+  Integer getPiorNota();
 
-    Integer getMelhorNota();
+  Integer getMelhorNota();
 }

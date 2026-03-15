@@ -13,20 +13,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/expenses")
 public class ExpenseController {
 
-    private final ExpenseService expenseService;
+  private final ExpenseService expenseService;
 
-    public ExpenseController(ExpenseService expenseService) {
-        this.expenseService = expenseService;
-    }
+  public ExpenseController(ExpenseService expenseService) {
+    this.expenseService = expenseService;
+  }
 
-    @PostMapping
-    public ResponseEntity<ExpenseResponseDTO> createExpense(@Valid @RequestBody ExpenseRequestDTO dto) {
-        ExpenseResponseDTO created = expenseService.createExpense(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
+  @PostMapping
+  public ResponseEntity<ExpenseResponseDTO> createExpense(
+      @Valid @RequestBody ExpenseRequestDTO dto) {
+    ExpenseResponseDTO created = expenseService.createExpense(dto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(created);
+  }
 
-    @GetMapping("/property/{propertyId}")
-    public ResponseEntity<ExpenseSummaryDTO> getExpensesByProperty(@PathVariable Long propertyId) {
-        return ResponseEntity.ok(expenseService.getExpensesByProperty(propertyId));
-    }
+  @GetMapping("/property/{propertyId}")
+  public ResponseEntity<ExpenseSummaryDTO> getExpensesByProperty(@PathVariable Long propertyId) {
+    return ResponseEntity.ok(expenseService.getExpensesByProperty(propertyId));
+  }
 }
