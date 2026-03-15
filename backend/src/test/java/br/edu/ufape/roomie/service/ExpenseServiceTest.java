@@ -11,7 +11,6 @@ import br.edu.ufape.roomie.model.Student;
 import br.edu.ufape.roomie.repository.ContractRepository;
 import br.edu.ufape.roomie.repository.ExpenseRepository;
 import br.edu.ufape.roomie.repository.PropertyRepository;
-import br.edu.ufape.roomie.repository.StudentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +28,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import br.edu.ufape.roomie.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,6 +88,39 @@ class ExpenseServiceTest {
         assertNotNull(result);
         assertEquals("Energia", result.getDescription());
         assertEquals(new BigDecimal("150.00"), result.getAmount());
+    }
+
+    @Test
+    @DisplayName("Deve registrar despesa com sucesso sendo um usuário não-estudante (proprietário)")
+    void shouldCreateExpenseSuccessfullyAsOwner() {
+        br.edu.ufape.roomie.model.User owner = new User();
+        owner.setId(2L);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(owner, null, null)
+        );
+
+        Property property = new Property();
+        property.setId(20L);
+
+        ExpenseRequestDTO dto = new ExpenseRequestDTO();
+        dto.setPropertyId(20L);
+        dto.setDescription("Manutenção");
+        dto.setAmount(new BigDecimal("300.00"));
+        dto.setExpenseDate(LocalDate.now());
+
+        when(propertyRepository.findById(20L)).thenReturn(Optional.of(property));
+        when(contractRepository.existsByPropertyIdAndUserIdAndStatusIn(20L, 2L, List.of(ContractStatus.ACTIVE))).thenReturn(true);
+        when(expenseRepository.save(any())).thenAnswer(i -> {
+            Expense e = i.getArgument(0);
+            e.setId(51L);
+            return e;
+        });
+
+        ExpenseResponseDTO result = expenseService.createExpense(dto);
+
+        assertNotNull(result);
+        assertEquals("Manutenção", result.getDescription());
+        assertEquals(new BigDecimal("300.00"), result.getAmount());
     }
 
     @Test
@@ -167,6 +201,35 @@ class ExpenseServiceTest {
         assertEquals(3, result.getNumberOfResidents());
         assertEquals(new BigDecimal("50.00"), result.getAmountPerResident());
         assertEquals(2, result.getExpenses().size());
+    }
+
+    @Test
+    @DisplayName("Deve retornar resumo de despesas com sucesso sendo um usuário não-estudante (proprietário)")
+    void shouldCalculateSummarySuccessfullyAsOwner() {
+        br.edu.ufape.roomie.model.User owner = new User();
+        owner.setId(2L);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(owner, null, null)
+        );
+
+        when(contractRepository.existsByPropertyIdAndUserIdAndStatusIn(20L, 2L, List.of(ContractStatus.ACTIVE))).thenReturn(true);
+        
+        Expense e1 = new Expense();
+        e1.setId(10L); 
+        e1.setAmount(new BigDecimal("200.00")); 
+        e1.setRegisteredBy(owner); 
+        e1.setExpenseDate(LocalDate.now());
+
+        when(expenseRepository.findByPropertyId(20L)).thenReturn(List.of(e1));
+        when(contractRepository.findByPropertyIdAndStatus(20L, ContractStatus.ACTIVE))
+                .thenReturn(List.of(new Contract(), new Contract()));
+
+        ExpenseSummaryDTO result = expenseService.getExpensesByProperty(20L);
+
+        assertEquals(new BigDecimal("200.00"), result.getTotalAmount());
+        assertEquals(2, result.getNumberOfResidents());
+        assertEquals(new BigDecimal("100.00"), result.getAmountPerResident());
+        assertEquals(1, result.getExpenses().size());
     }
 
     @Test
