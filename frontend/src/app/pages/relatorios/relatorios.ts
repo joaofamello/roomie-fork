@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { HeaderComponent } from '../../components/shared/header/header.component';
 import { ExpenseRequest, ExpenseSummary } from '../../models/expense.model';
 import { PropertyDetailView } from '../../models/property-detail-view';
@@ -105,9 +106,21 @@ export class RelatoriosComponent implements OnInit {
 
   loadMyProperties(): void {
     this.isLoadingProperties = true;
-    this.propertyService.getMyResidentProperties().subscribe({
-      next: (properties: PropertyDetailView[]) => {
-        this.myProperties = properties;
+
+    forkJoin({
+      resident: this.propertyService.getMyResidentProperties(),
+      owned: this.propertyService.getMyProperties()
+    }).subscribe({
+      next: ({ resident, owned }) => {
+        // Remove duplicatas (caso um usuário seja de alguma forma dono e morador ao mesmo tempo)
+        const allProperties = [...resident, ...owned];
+        const uniquePropertiesMap = new Map<number, PropertyDetailView>();
+
+        allProperties.forEach(prop => {
+          uniquePropertiesMap.set(prop.idImovel, prop);
+        });
+
+        this.myProperties = Array.from(uniquePropertiesMap.values());
         this.isLoadingProperties = false;
         this.cdr.detectChanges();
       },

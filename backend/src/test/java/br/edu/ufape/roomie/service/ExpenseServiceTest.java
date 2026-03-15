@@ -50,6 +50,13 @@ class ExpenseServiceTest {
     mockStudent.setId(1L);
     SecurityContextHolder.getContext()
         .setAuthentication(new UsernamePasswordAuthenticationToken(mockStudent, null, null));
+
+    Property defaultProp = new Property();
+    defaultProp.setId(10L);
+    User defaultOwner = new User();
+    defaultOwner.setId(999L);
+    defaultProp.setOwner(defaultOwner);
+    lenient().when(propertyRepository.findById(anyLong())).thenReturn(Optional.of(defaultProp));
   }
 
   @AfterEach
@@ -163,6 +170,13 @@ class ExpenseServiceTest {
   @Test
   @DisplayName("Deve lançar FORBIDDEN quando o estudante não for morador ao tentar ver despesas")
   void getExpensesByProperty_whenNotResident_throwsForbidden() {
+    Property prop = new Property();
+    prop.setId(10L);
+    User otherOwner = new User();
+    otherOwner.setId(99L);
+    prop.setOwner(otherOwner);
+    when(propertyRepository.findById(10L)).thenReturn(Optional.of(prop));
+
     when(contractRepository.existsByPropertyIdAndUserIdAndStatusIn(
             10L, 1L, List.of(ContractStatus.ACTIVE)))
         .thenReturn(false);

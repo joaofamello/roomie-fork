@@ -56,13 +56,15 @@ public class ExpenseService {
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
 
+    boolean isOwner = property.getOwner() != null && property.getOwner().getId().equals(user.getId());
+
     boolean hasContract =
         contractRepository.existsByPropertyIdAndUserIdAndStatusIn(
             property.getId(), user.getId(), List.of(ContractStatus.ACTIVE));
 
-    if (!hasContract) {
+    if (!isOwner && !hasContract) {
       throw new ResponseStatusException(
-          HttpStatus.FORBIDDEN, "Você não possui um contrato ativo para esta moradia.");
+          HttpStatus.FORBIDDEN, "Você não possui um contrato ativo para esta moradia e não é o dono do imóvel.");
     }
 
     Expense expense = new Expense();
@@ -79,13 +81,18 @@ public class ExpenseService {
   public ExpenseSummaryDTO getExpensesByProperty(Long propertyId) {
     User user = getAuthenticatedUser();
 
+    Property property = propertyRepository.findById(propertyId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Imóvel não encontrado."));
+
+    boolean isOwner = property.getOwner() != null && property.getOwner().getId().equals(user.getId());
+
     boolean hasContract =
         contractRepository.existsByPropertyIdAndUserIdAndStatusIn(
             propertyId, user.getId(), List.of(ContractStatus.ACTIVE));
 
-    if (!hasContract) {
+    if (!isOwner && !hasContract) {
       throw new ResponseStatusException(
-          HttpStatus.FORBIDDEN, "Apenas pessoas com contrato ativo podem ver as despesas.");
+          HttpStatus.FORBIDDEN, "Apenas pessoas com contrato ativo ou o dono do imóvel podem ver as despesas.");
     }
 
     List<Expense> expenses = expenseRepository.findByPropertyId(propertyId);
